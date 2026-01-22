@@ -21,7 +21,7 @@ public class DatabaseConnection {
         );
 
         config.setUsername("root");
-        config.setPassword("th0m4sj4m3s"); //Nhap mat khau server
+        config.setPassword("..."); //Nhap mat khau server
 
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
