@@ -1,0 +1,46 @@
+.root {
+    -fx-background-color: #121212;
+}
+
+.header {
+    -fx-padding: 15;
+    -fx-background-color: linear-gradient(to right, #000, #222);
+}
+
+.title {
+    -fx-text-fill: gold;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.sidebar, .payment-panel {
+    -fx-padding: 15;
+    -fx-background-color: #1c1c1c;
+}
+
+.section-title {
+    -fx-text-fill: gold;
+    -fx-font-size: 14px;
+}
+
+.screen {
+    -fx-background-color: gold;
+    -fx-padding: 5 20;
+    -fx-font-weight: bold;
+}
+
+.button.seat {
+    -fx-background-radius: 8;
+}
+
+.seat-available {
+    -fx-background-color: #2ecc71;
+}
+
+.seat-selected {
+    -fx-background-color: #f1c40f;
+}
+
+.seat-booked {
+    -fx-background-color: #7f8c8d;
+}
