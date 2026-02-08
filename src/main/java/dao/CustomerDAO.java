@@ -236,4 +236,51 @@ public class CustomerDAO {
         customer.setUpdatedAt(rs.getTimestamp("updated_at"));
         return customer;
     }
+
+    // ======================= LOGIN =======================
+    public Customer login(String email, String password) throws SQLException {
+
+        String sql = """
+        SELECT customer_id, name, email, phone, date_of_birth, created_at, updated_at
+        FROM customers
+        WHERE email = ? AND password = ?
+    """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+            stmt.setString(2, password);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractCustomerFromResultSet(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean register(Customer customer, String password) throws SQLException {
+
+        String sql = """
+        INSERT INTO customers (name, email, phone, password)
+        VALUES (?, ?, ?, ?)
+    """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getEmail());
+            stmt.setString(3, customer.getPhone());
+            stmt.setString(4, password);
+
+            int rows = stmt.executeUpdate();
+            conn.commit();
+            return rows > 0;
+        }
+    }
+
+
 }
