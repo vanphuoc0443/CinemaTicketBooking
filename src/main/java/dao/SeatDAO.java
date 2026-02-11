@@ -15,7 +15,7 @@ public class SeatDAO {
         String sql = "SELECT * FROM seats WHERE seat_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, seatId);
 
@@ -27,6 +27,35 @@ public class SeatDAO {
         }
 
         return null;
+    }
+
+    // Lay nhieu ghe theo IDs
+    public List<Seat> findByIds(List<Integer> seatIds) throws SQLException {
+        List<Seat> seats = new ArrayList<>();
+        if (seatIds == null || seatIds.isEmpty()) {
+            return seats;
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM seats WHERE seat_id IN (");
+        for (int i = 0; i < seatIds.size(); i++) {
+            sql.append(i == 0 ? "?" : ", ?");
+        }
+        sql.append(")");
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < seatIds.size(); i++) {
+                stmt.setInt(i + 1, seatIds.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    seats.add(extractSeatFromResultSet(rs));
+                }
+            }
+        }
+        return seats;
     }
 
     // Khoa ghe de cap nhat (Pessimistic Locking)
@@ -52,7 +81,7 @@ public class SeatDAO {
         String sql = "SELECT * FROM seats WHERE showtime_id = ? ORDER BY seat_number";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
 
@@ -73,7 +102,7 @@ public class SeatDAO {
                 "ORDER BY seat_number";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
 
@@ -92,7 +121,7 @@ public class SeatDAO {
         String sql = "UPDATE seats SET status = ?, version = version + 1 WHERE seat_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, status.name());
             stmt.setInt(2, seatId);
@@ -115,7 +144,7 @@ public class SeatDAO {
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             for (Seat seat : seats) {
                 stmt.setInt(1, seat.getShowtimeId());

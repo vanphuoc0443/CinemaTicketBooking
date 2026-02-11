@@ -3,53 +3,114 @@ package dao;
 import model.Booking;
 import model.BookingStatus;
 import util.DatabaseConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object cho Booking
+ * ✅ Đã sửa lỗi resource leak và cải thiện transaction handling
+ */
 public class BookingDAO {
 
-    // Luu booking moi va tra ve ID
+    private static final Logger logger = LoggerFactory.getLogger(BookingDAO.class);
+
+    /**
+     * Lưu booking mới và trả về ID
+     * ✅ SỬA LỖI: Sử dụng try-with-resources để tránh connection leak
+     * ✅ SỬA LỖI: Thêm proper rollback handling
+     */
     public int save(Booking booking) throws SQLException {
         String sql = "INSERT INTO bookings (customer_id, showtime_id, total_amount, status) " +
                 "VALUES (?, ?, ?, ?)";
 
-        Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
 
-        stmt.setInt(1, booking.getCustomerId());
-        stmt.setInt(2, booking.getShowtimeId());
-        stmt.setDouble(3, booking.getTotalAmount());
-        stmt.setString(4, booking.getStatus().name());
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        int result = stmt.executeUpdate();
+                stmt.setInt(1, booking.getCustomerId());
+                stmt.setInt(2, booking.getShowtimeId());
+                stmt.setDouble(3, booking.getTotalAmount());
+                stmt.setString(4, booking.getStatus().name());
 
-        if (result > 0) {
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                int bookingId = rs.getInt(1);
+                int result = stmt.executeUpdate();
 
-                // Luu booking_seats
-                String seatSql = "INSERT INTO booking_seats (booking_id, seat_id) VALUES (?, ?)";
-                PreparedStatement seatStmt = conn.prepareStatement(seatSql);
+                if (result > 0) {
+                    try (ResultSet rs = stmt.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            int bookingId = rs.getInt(1);
 
-                for (int seatId : booking.getSeatIds()) {
-                    seatStmt.setInt(1, bookingId);
-                    seatStmt.setInt(2, seatId);
-                    seatStmt.addBatch();
+                            logger.info("Created booking with ID: {}", bookingId);
+
+                            // Lưu booking_seats
+                            String seatSql = "INSERT INTO booking_seats (booking_id, seat_id) VALUES (?, ?)";
+                            try (PreparedStatement seatStmt = conn.prepareStatement(seatSql)) {
+
+                                int batchSize = 100;
+                                int count = 0;
+
+                                for (int seatId : booking.getSeatIds()) {
+                                    seatStmt.setInt(1, bookingId);
+                                    seatStmt.setInt(2, seatId);
+                                    seatStmt.addBatch();
+                                    count++;
+
+                                    // ✅ TỐI ƯU: Execute batch mỗi 100 records
+                                    if (count % batchSize == 0) {
+                                        seatStmt.executeBatch();
+                                        seatStmt.clearBatch();
+                                    }
+                                }
+
+                                // Execute remaining
+                                if (count % batchSize != 0) {
+                                    seatStmt.executeBatch();
+                                }
+                            }
+
+                            conn.commit();
+                            logger.info("Successfully saved booking {} with {} seats", bookingId, booking.getSeatIds().size());
+                            return bookingId;
+                        }
+                    }
                 }
 
-                seatStmt.executeBatch();
-                conn.commit();
+                logger.warn("Failed to create booking - no rows affected");
+                return -1;
 
-                return bookingId;
+            } catch (SQLException e) {
+                // ✅ SỬA LỖI: Rollback khi có lỗi
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                        logger.error("Rolled back transaction due to error", e);
+                    } catch (SQLException rollbackEx) {
+                        logger.error("Error during rollback", rollbackEx);
+                    }
+                }
+                throw e;
+            }
+        } finally {
+            // ✅ SỬA LỖI: Đảm bảo close connection
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    logger.error("Error closing connection", closeEx);
+                }
             }
         }
-
-        return -1;
     }
 
-    // Lay booking theo ID
+    /**
+     * Lấy booking theo ID
+     * ✅ SỬA LỖI: Đã dùng try-with-resources đúng cách
+     */
     public Booking findById(int bookingId) throws SQLException {
         String sql = "SELECT b.*, c.name as customer_name, m.title as movie_title, " +
                 "s.show_date, s.show_time " +
@@ -70,23 +131,32 @@ public class BookingDAO {
 
                     // Load seat IDs
                     String seatSql = "SELECT seat_id FROM booking_seats WHERE booking_id = ?";
-                    PreparedStatement seatStmt = conn.prepareStatement(seatSql);
-                    seatStmt.setInt(1, bookingId);
-                    ResultSet seatRs = seatStmt.executeQuery();
+                    try (PreparedStatement seatStmt = conn.prepareStatement(seatSql)) {
+                        seatStmt.setInt(1, bookingId);
 
-                    while (seatRs.next()) {
-                        booking.addSeatId(seatRs.getInt("seat_id"));
+                        try (ResultSet seatRs = seatStmt.executeQuery()) {
+                            while (seatRs.next()) {
+                                booking.addSeatId(seatRs.getInt("seat_id"));
+                            }
+                        }
                     }
 
+                    logger.debug("Found booking: {}", bookingId);
                     return booking;
                 }
             }
+        } catch (SQLException e) {
+            logger.error("Error finding booking by id: {}", bookingId, e);
+            throw e;
         }
 
+        logger.debug("Booking not found: {}", bookingId);
         return null;
     }
 
-    // Lay booking theo khach hang
+    /**
+     * Lấy booking theo khách hàng
+     */
     public List<Booking> findByCustomer(int customerId) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT b.*, c.name as customer_name, m.title as movie_title, " +
@@ -107,12 +177,19 @@ public class BookingDAO {
                     bookings.add(extractBookingFromResultSet(rs));
                 }
             }
+
+            logger.debug("Found {} bookings for customer {}", bookings.size(), customerId);
+        } catch (SQLException e) {
+            logger.error("Error finding bookings for customer: {}", customerId, e);
+            throw e;
         }
 
         return bookings;
     }
 
-    // Lay booking theo suat chieu
+    /**
+     * Lấy booking theo suất chiếu
+     */
     public List<Booking> findByShowtime(int showtimeId) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT b.*, c.name as customer_name, m.title as movie_title, " +
@@ -133,44 +210,113 @@ public class BookingDAO {
                     bookings.add(extractBookingFromResultSet(rs));
                 }
             }
+
+            logger.debug("Found {} bookings for showtime {}", bookings.size(), showtimeId);
+        } catch (SQLException e) {
+            logger.error("Error finding bookings for showtime: {}", showtimeId, e);
+            throw e;
         }
 
         return bookings;
     }
 
-    // Cap nhat trang thai booking
+    /**
+     * Cập nhật trạng thái booking
+     * ✅ SỬA LỖI: Proper transaction handling
+     */
     public boolean updateStatus(int bookingId, BookingStatus status) throws SQLException {
         String sql = "UPDATE bookings SET status = ? WHERE booking_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
 
-            stmt.setString(1, status.name());
-            stmt.setInt(2, bookingId);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, status.name());
+                stmt.setInt(2, bookingId);
 
-            int result = stmt.executeUpdate();
-            conn.commit();
+                int result = stmt.executeUpdate();
+                conn.commit();
 
-            return result > 0;
+                if (result > 0) {
+                    logger.info("Updated booking {} status to {}", bookingId, status);
+                    return true;
+                }
+
+                logger.warn("No booking found with id {} to update", bookingId);
+                return false;
+
+            } catch (SQLException e) {
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                        logger.error("Rolled back status update for booking {}", bookingId, e);
+                    } catch (SQLException rollbackEx) {
+                        logger.error("Error during rollback", rollbackEx);
+                    }
+                }
+                throw e;
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    logger.error("Error closing connection", closeEx);
+                }
+            }
         }
     }
 
-    // Xoa booking
+    /**
+     * Xóa booking
+     * ✅ SỬA LỖI: Proper transaction handling
+     */
     public boolean delete(int bookingId) throws SQLException {
         String sql = "DELETE FROM bookings WHERE booking_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
 
-            stmt.setInt(1, bookingId);
-            int result = stmt.executeUpdate();
-            conn.commit();
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, bookingId);
+                int result = stmt.executeUpdate();
+                conn.commit();
 
-            return result > 0;
+                if (result > 0) {
+                    logger.info("Deleted booking {}", bookingId);
+                    return true;
+                }
+
+                logger.warn("No booking found with id {} to delete", bookingId);
+                return false;
+
+            } catch (SQLException e) {
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                        logger.error("Rolled back delete for booking {}", bookingId, e);
+                    } catch (SQLException rollbackEx) {
+                        logger.error("Error during rollback", rollbackEx);
+                    }
+                }
+                throw e;
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException closeEx) {
+                    logger.error("Error closing connection", closeEx);
+                }
+            }
         }
     }
 
-    // Trich xuat Booking tu ResultSet
+    /**
+     * Trích xuất Booking từ ResultSet
+     */
     private Booking extractBookingFromResultSet(ResultSet rs) throws SQLException {
         Booking booking = new Booking();
         booking.setBookingId(rs.getInt("booking_id"));

@@ -1,6 +1,6 @@
 package model;
+
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class Showtime {
     private int showtimeId;
@@ -15,7 +15,8 @@ public class Showtime {
 
     private String movieTitle;
 
-    public Showtime() {}
+    public Showtime() {
+    }
 
     public Showtime(int showtimeId, int movieId, String showDate, String showTime, int roomNumber) {
         this.showtimeId = showtimeId;
@@ -28,7 +29,7 @@ public class Showtime {
     }
 
     public Showtime(int showtimeId, int movieId, String showDate, String showTime,
-                    int roomNumber, int totalSeats, int availableSeats) {
+            int roomNumber, int totalSeats, int availableSeats) {
         this.showtimeId = showtimeId;
         this.movieId = movieId;
         this.showDate = showDate;

@@ -12,11 +12,11 @@ import java.util.UUID;
  * DAO để quản lý User (authentication)
  * Extend CustomerDAO để tái sử dụng các method cơ bản
  */
-public class Userdao {
+public class UserDAO {
 
     private final CustomerDAO customerDAO;
 
-    public Userdao() {
+    public UserDAO() {
         this.customerDAO = new CustomerDAO();
     }
 
