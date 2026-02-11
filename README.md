@@ -45,7 +45,6 @@ A modern, responsive desktop application for booking cinema tickets, built with 
 
 2. **Configure Database**
    - Import the database schema (if provided in `sql/` or docs).
-   - Rename `src/main/resources/config.properties.example` to `config.properties`.
    - Update your database credentials in `config.properties`.
 
 3. **Build the Project**
@@ -76,5 +75,6 @@ src/main/resources/
 ```
 ---
 *Built with ❤️ by vanphuoc0443 and minh656512-debug*
+
 
 
