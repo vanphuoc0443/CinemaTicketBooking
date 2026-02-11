@@ -1,7 +1,9 @@
 package app;
 
+import fxcontroller.SceneManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -12,19 +14,18 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
+        SceneManager.setStage(stage);
 
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/main-view.fxml")
-        );
-
-        Scene scene = new Scene(loader.load());
+        // Start with login screen
+        Parent root = FXMLLoader.load(getClass().getResource("/ui/view/login.fxml"));
+        Scene scene = new Scene(root, 1000, 700);
         scene.getStylesheets().add(
-                getClass().getResource("/css/style.css").toExternalForm()
-        );
+                getClass().getResource("/css/style.css").toExternalForm());
 
-        stage.setTitle("Cinema Booking System");
+        stage.setTitle("🎬 Cinema Ticket Booking");
         stage.setScene(scene);
-        stage.setMaximized(true);
+        stage.setMinWidth(900);
+        stage.setMinHeight(600);
         stage.show();
     }
 
