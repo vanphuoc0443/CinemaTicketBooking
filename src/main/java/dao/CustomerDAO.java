@@ -14,8 +14,8 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customers ORDER BY name";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 customers.add(extractCustomerFromResultSet(rs));
@@ -30,7 +30,7 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customers WHERE customer_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, customerId);
 
@@ -49,7 +49,7 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customers WHERE email = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
 
@@ -68,7 +68,7 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customers WHERE phone = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, phone);
 
@@ -88,7 +88,7 @@ public class CustomerDAO {
         String sql = "SELECT * FROM customers WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? ORDER BY name";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             String searchPattern = "%" + keyword + "%";
             stmt.setString(1, searchPattern);
@@ -110,13 +110,13 @@ public class CustomerDAO {
         String sql = "INSERT INTO customers (name, email, phone, date_of_birth) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getEmail());
             stmt.setString(3, customer.getPhone());
-            stmt.setDate(4, customer.getDateOfBirth() != null ?
-                    new java.sql.Date(customer.getDateOfBirth().getTime()) : null);
+            stmt.setDate(4,
+                    customer.getDateOfBirth() != null ? new java.sql.Date(customer.getDateOfBirth().getTime()) : null);
 
             int result = stmt.executeUpdate();
 
@@ -139,12 +139,12 @@ public class CustomerDAO {
         String sql = "UPDATE customers SET name = ?, phone = ?, date_of_birth = ? WHERE customer_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, customer.getName());
             stmt.setString(2, customer.getPhone());
-            stmt.setDate(3, customer.getDateOfBirth() != null ?
-                    new java.sql.Date(customer.getDateOfBirth().getTime()) : null);
+            stmt.setDate(3,
+                    customer.getDateOfBirth() != null ? new java.sql.Date(customer.getDateOfBirth().getTime()) : null);
             stmt.setInt(4, customer.getCustomerId());
 
             int result = stmt.executeUpdate();
@@ -159,7 +159,7 @@ public class CustomerDAO {
         String sql = "DELETE FROM customers WHERE customer_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, customerId);
             int result = stmt.executeUpdate();
@@ -174,7 +174,7 @@ public class CustomerDAO {
         String sql = "SELECT COUNT(*) FROM customers WHERE email = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
 
@@ -193,7 +193,7 @@ public class CustomerDAO {
         String sql = "SELECT COUNT(*) FROM customers WHERE email = ? AND customer_id != ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
             stmt.setInt(2, customerId);
@@ -213,8 +213,8 @@ public class CustomerDAO {
         String sql = "SELECT COUNT(*) FROM customers";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
                 return rs.getInt(1);
@@ -222,6 +222,66 @@ public class CustomerDAO {
         }
 
         return 0;
+    }
+
+    // Dang nhap khach hang
+    public Customer login(String email, String password) throws SQLException {
+        Customer customer = findByEmail(email);
+        if (customer == null) {
+            return null;
+        }
+
+        // Verify password
+        String sql = "SELECT password_hash FROM customers WHERE customer_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, customer.getCustomerId());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String storedHash = rs.getString("password_hash");
+                    if (storedHash != null && org.mindrot.jbcrypt.BCrypt.checkpw(password, storedHash)) {
+                        return customer;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // Dang ky khach hang moi
+    public boolean register(Customer customer, String password) throws SQLException {
+        String sql = "INSERT INTO customers (name, email, phone, date_of_birth, password_hash) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            String passwordHash = org.mindrot.jbcrypt.BCrypt.hashpw(password, org.mindrot.jbcrypt.BCrypt.gensalt());
+
+            stmt.setString(1, customer.getName());
+            stmt.setString(2, customer.getEmail());
+            stmt.setString(3, customer.getPhone());
+            stmt.setDate(4,
+                    customer.getDateOfBirth() != null ? new java.sql.Date(customer.getDateOfBirth().getTime()) : null);
+            stmt.setString(5, passwordHash);
+
+            int result = stmt.executeUpdate();
+
+            if (result > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        customer.setCustomerId(rs.getInt(1));
+                    }
+                }
+                conn.commit();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Trich xuat Customer tu ResultSet

@@ -14,6 +14,7 @@ public class SeatLockDAO {
 
     /**
      * Lock ghế cho user
+     * 
      * @return true nếu lock thành công, false nếu ghế đã bị lock bởi người khác
      */
     public boolean lockSeat(int seatId, int showtimeId, int customerId, String sessionToken)
@@ -78,46 +79,86 @@ public class SeatLockDAO {
     /**
      * Lock nhiều ghế cùng lúc
      */
+    /**
+     * Lock nhiều ghế cùng lúc (Optimized & Transactional)
+     */
     public boolean lockSeats(List<Integer> seatIds, int showtimeId, int customerId,
-                             String sessionToken) throws SQLException {
+            String sessionToken) throws SQLException {
+
+        if (seatIds == null || seatIds.isEmpty()) {
+            return false;
+        }
 
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // Xóa locks cũ
-            cleanupExpiredLocks(showtimeId);
+            // 1. Xóa locks cũ (trong cùng transaction)
+            String cleanupSql = "UPDATE seat_locks SET is_active = FALSE " +
+                    "WHERE showtime_id = ? AND is_active = TRUE " +
+                    "AND expires_at <= CURRENT_TIMESTAMP";
+            try (PreparedStatement cleanupStmt = conn.prepareStatement(cleanupSql)) {
+                cleanupStmt.setInt(1, showtimeId);
+                cleanupStmt.executeUpdate();
+            }
 
-            // Kiểm tra tất cả ghế
-            for (int seatId : seatIds) {
-                if (isSeatLocked(seatId, showtimeId, customerId)) {
-                    conn.rollback();
-                    return false;
+            // 2. Kiểm tra xem có ghế nào ĐANG bị lock bởi người khác không
+            // Sử dụng "SELECT ... FOR UPDATE" để lock rows tránh race condition
+            // Hoặc đơn giản là query thông thường nếu DB isolation level đủ cao.
+            // Ở đây dùng check logic application level kết hợp unique constraint (nếu có)
+            // hoặc check thủ công.
+            StringBuilder checkSql = new StringBuilder(
+                    "SELECT COUNT(*) FROM seat_locks " +
+                            "WHERE showtime_id = ? AND is_active = TRUE " +
+                            "AND expires_at > CURRENT_TIMESTAMP " +
+                            "AND customer_id != ? " +
+                            "AND seat_id IN (");
+
+            for (int i = 0; i < seatIds.size(); i++) {
+                checkSql.append(i == 0 ? "?" : ", ?");
+            }
+            checkSql.append(")");
+
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql.toString())) {
+                int paramIndex = 1;
+                checkStmt.setInt(paramIndex++, showtimeId);
+                checkStmt.setInt(paramIndex++, customerId);
+                for (int seatId : seatIds) {
+                    checkStmt.setInt(paramIndex++, seatId);
+                }
+
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        // Có ít nhất 1 ghế đang bị lock bởi người khác
+                        conn.rollback();
+                        return false;
+                    }
                 }
             }
 
-            // Lock tất cả ghế
-            String sql = "INSERT INTO seat_locks (seat_id, showtime_id, customer_id, " +
+            // 3. Insert locks
+            String insertSql = "INSERT INTO seat_locks (seat_id, showtime_id, customer_id, " +
                     "session_token, locked_at, expires_at, is_active) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                // Lock trong 10 phút (ví dụ)
+                Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);
+
                 for (int seatId : seatIds) {
-                    SeatLock lock = new SeatLock(seatId, showtimeId, customerId, sessionToken);
-
-                    stmt.setInt(1, lock.getSeatId());
-                    stmt.setInt(2, lock.getShowtimeId());
-                    stmt.setInt(3, lock.getCustomerId());
-                    stmt.setString(4, lock.getSessionToken());
-                    stmt.setTimestamp(5, lock.getLockedAt());
-                    stmt.setTimestamp(6, lock.getExpiresAt());
-                    stmt.setBoolean(7, lock.isActive());
-
-                    stmt.addBatch();
+                    insertStmt.setInt(1, seatId);
+                    insertStmt.setInt(2, showtimeId);
+                    insertStmt.setInt(3, customerId);
+                    insertStmt.setString(4, sessionToken);
+                    insertStmt.setTimestamp(5, now);
+                    insertStmt.setTimestamp(6, expiresAt);
+                    insertStmt.setBoolean(7, true);
+                    insertStmt.addBatch();
                 }
 
-                stmt.executeBatch();
+                insertStmt.executeBatch();
             }
 
             conn.commit();
@@ -125,12 +166,17 @@ public class SeatLockDAO {
 
         } catch (SQLException e) {
             if (conn != null) {
-                conn.rollback();
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
             throw e;
         } finally {
             if (conn != null) {
                 conn.setAutoCommit(true);
+                conn.close();
             }
         }
     }
@@ -145,7 +191,7 @@ public class SeatLockDAO {
                 "WHERE seat_id = ? AND showtime_id = ? AND session_token = ? AND is_active = TRUE";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, seatId);
             stmt.setInt(2, showtimeId);
@@ -168,7 +214,7 @@ public class SeatLockDAO {
                 "WHERE session_token = ? AND showtime_id = ? AND is_active = TRUE";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, sessionToken);
             stmt.setInt(2, showtimeId);
@@ -192,7 +238,7 @@ public class SeatLockDAO {
                 "AND customer_id != ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, seatId);
             stmt.setInt(2, showtimeId);
@@ -220,7 +266,7 @@ public class SeatLockDAO {
                 "ORDER BY locked_at DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
 
@@ -247,7 +293,7 @@ public class SeatLockDAO {
                 "AND expires_at > CURRENT_TIMESTAMP";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, sessionToken);
             stmt.setInt(2, showtimeId);
@@ -271,7 +317,7 @@ public class SeatLockDAO {
                 "AND expires_at <= CURRENT_TIMESTAMP";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
             int result = stmt.executeUpdate();
@@ -291,7 +337,7 @@ public class SeatLockDAO {
                 "WHERE session_token = ? AND showtime_id = ? AND is_active = TRUE";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, sessionToken);
             stmt.setInt(2, showtimeId);

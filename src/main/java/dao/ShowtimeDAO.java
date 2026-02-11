@@ -123,7 +123,7 @@ public class ShowtimeDAO {
 
             stmt.setInt(1, showtime.getMovieId());
             stmt.setString(2, showtime.getShowDate());
-            stmt.setString(3, showtime.getShowTime());
+            stmt.setString(3, String.valueOf(showtime.getShowTime()));
             stmt.setInt(4, showtime.getRoomNumber());
             stmt.setInt(5, showtime.getTotalSeats());
             stmt.setInt(6, showtime.getAvailableSeats());
@@ -154,7 +154,7 @@ public class ShowtimeDAO {
 
             stmt.setInt(1, showtime.getMovieId());
             stmt.setString(2, showtime.getShowDate());
-            stmt.setString(3, showtime.getShowTime());
+            stmt.setString(3, String.valueOf(showtime.getShowTime()));
             stmt.setInt(4, showtime.getRoomNumber());
             stmt.setInt(5, showtime.getShowtimeId());
 
