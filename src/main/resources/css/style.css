@@ -1,46 +1,502 @@
+/* ============================================================
+   CINEMA TICKET BOOKING — Design System
+   Dark cinema theme with gold/red accents
+   ============================================================ */
+
+/* === ROOT & GLOBAL === */
 .root {
-    -fx-background-color: #121212;
+    -fx-bg-primary: #0a0e17;
+    -fx-bg-card: #151c2c;
+    -fx-bg-elevated: #1e2a3d;
+    -fx-bg-input: #1a2235;
+    -fx-accent-gold: #d4a843;
+    -fx-accent-red: #e53935;
+    -fx-accent-red-hover: #c62828;
+    -fx-accent-green: #43a047;
+    -fx-accent-purple: #7e57c2;
+    -fx-text-primary: #eef0f4;
+    -fx-text-secondary: #8893a7;
+    -fx-text-muted: #556078;
+    -fx-border-color-custom: #2a3550;
+    -fx-seat-booked: #37474f;
+
+    -fx-background-color: -fx-bg-primary;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 14px;
 }
 
-.header {
-    -fx-padding: 15;
-    -fx-background-color: linear-gradient(to right, #000, #222);
+/* === TYPOGRAPHY === */
+.heading-xl {
+    -fx-text-fill: -fx-accent-gold;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
 }
 
-.title {
-    -fx-text-fill: gold;
+.heading-lg {
+    -fx-text-fill: -fx-accent-gold;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.heading-md {
+    -fx-text-fill: -fx-accent-gold;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.heading-sm {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.text-body {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: 14px;
+}
+
+.text-secondary {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 13px;
+}
+
+.text-muted {
+    -fx-text-fill: -fx-text-muted;
+    -fx-font-size: 12px;
+}
+
+.text-white {
+    -fx-text-fill: #eef0f4;
+}
+
+.text-gold {
+    -fx-text-fill: #d4a843;
+}
+
+.text-error {
+    -fx-text-fill: #ef5350;
+    -fx-font-size: 13px;
+}
+
+/* === CARDS === */
+.card {
+    -fx-background-color: #151c2c;
+    -fx-background-radius: 16;
+    -fx-padding: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0, 0, 6);
+}
+
+.card-elevated {
+    -fx-background-color: #1e2a3d;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0, 0, 4);
+}
+
+.card-movie {
+    -fx-background-color: #151c2c;
+    -fx-background-radius: 12;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 5);
+}
+
+.card-movie:hover {
+    -fx-background-color: #1e2a3d;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.15), 20, 0, 0, 8);
+}
+
+/* === BUTTONS === */
+.btn-primary {
+    -fx-background-color: #e53935;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 32;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(229,57,53,0.3), 10, 0, 0, 3);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #c62828;
+    -fx-effect: dropshadow(gaussian, rgba(229,57,53,0.5), 14, 0, 0, 4);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #b71c1c;
+    -fx-effect: dropshadow(gaussian, rgba(229,57,53,0.2), 6, 0, 0, 2);
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #2a3550;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #eef0f4;
+    -fx-font-size: 14px;
+    -fx-padding: 10 24;
+    -fx-cursor: hand;
+}
+
+.btn-outline:hover {
+    -fx-border-color: #d4a843;
+    -fx-text-fill: #d4a843;
+    -fx-background-color: rgba(212,168,67,0.08);
+}
+
+.btn-gold {
+    -fx-background-color: linear-gradient(to right, #d4a843, #c49630);
+    -fx-text-fill: #0a0e17;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 32;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.3), 10, 0, 0, 3);
+}
+
+.btn-gold:hover {
+    -fx-background-color: linear-gradient(to right, #c49630, #b8882a);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.5), 14, 0, 0, 4);
+}
+
+.btn-text {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d4a843;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 4 8;
+}
+
+.btn-text:hover {
+    -fx-text-fill: #eef0f4;
+    -fx-underline: true;
+}
+
+/* === INPUT FIELDS === */
+.input-field {
+    -fx-background-color: #1a2235;
+    -fx-border-color: #2a3550;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #eef0f4;
+    -fx-prompt-text-fill: #556078;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.input-field:focused {
+    -fx-border-color: #d4a843;
+    -fx-background-color: #1e2a3d;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.15), 8, 0, 0, 0);
+}
+
+/* === TOP NAVIGATION BAR === */
+.navbar {
+    -fx-background-color: linear-gradient(to right, #0d1220, #151c2c);
+    -fx-padding: 12 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 3);
+}
+
+.navbar-title {
+    -fx-text-fill: #d4a843;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
 }
 
-.sidebar, .payment-panel {
-    -fx-padding: 15;
-    -fx-background-color: #1c1c1c;
-}
-
-.section-title {
-    -fx-text-fill: gold;
-    -fx-font-size: 14px;
-}
-
-.screen {
-    -fx-background-color: gold;
-    -fx-padding: 5 20;
+/* === SEAT CLASSES === */
+.seat-btn {
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-background-radius: 8 8 4 4;
+    -fx-font-size: 11px;
     -fx-font-weight: bold;
-}
-
-.button.seat {
-    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
 }
 
 .seat-available {
-    -fx-background-color: #2ecc71;
+    -fx-background-color: #43a047;
+    -fx-text-fill: white;
+}
+
+.seat-available:hover {
+    -fx-background-color: #66bb6a;
+    -fx-effect: dropshadow(gaussian, rgba(67,160,71,0.4), 8, 0, 0, 3);
 }
 
 .seat-selected {
-    -fx-background-color: #f1c40f;
+    -fx-background-color: #d4a843;
+    -fx-text-fill: #0a0e17;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.4), 8, 0, 0, 3);
 }
 
 .seat-booked {
-    -fx-background-color: #7f8c8d;
+    -fx-background-color: #37474f;
+    -fx-text-fill: #78909c;
+    -fx-cursor: default;
+    -fx-opacity: 0.6;
+}
+
+.seat-vip {
+    -fx-background-color: #7e57c2;
+    -fx-text-fill: white;
+}
+
+.seat-vip:hover {
+    -fx-background-color: #9575cd;
+    -fx-effect: dropshadow(gaussian, rgba(126,87,194,0.4), 8, 0, 0, 3);
+}
+
+/* === SCREEN INDICATOR === */
+.screen-indicator {
+    -fx-background-color: linear-gradient(to right, rgba(212,168,67,0.05), rgba(212,168,67,0.3), rgba(212,168,67,0.05));
+    -fx-background-radius: 0 0 50 50;
+    -fx-padding: 8 60;
+    -fx-alignment: center;
+}
+
+.screen-label {
+    -fx-text-fill: #d4a843;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 4;
+}
+
+/* === LEGEND === */
+.legend-dot {
+    -fx-min-width: 16;
+    -fx-min-height: 16;
+    -fx-max-width: 16;
+    -fx-max-height: 16;
+    -fx-background-radius: 4;
+    -fx-border-width: 0;
+}
+
+/* === SECTION TITLE === */
+.section-title {
+    -fx-text-fill: #d4a843;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* === SEPARATOR === */
+.separator .line {
+    -fx-border-color: #2a3550;
+    -fx-border-width: 0.5 0 0 0;
+}
+
+/* === SCROLLPANE === */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical,
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #2a3550;
+    -fx-background-radius: 4;
+}
+
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #3a4560;
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane .scroll-bar .increment-arrow,
+.scroll-pane .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* === LISTVIEW === */
+.list-view {
+    -fx-background-color: #151c2c;
+    -fx-border-color: #2a3550;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #eef0f4;
+    -fx-padding: 10 16;
+    -fx-font-size: 14px;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #1e2a3d;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: rgba(212,168,67,0.15);
+    -fx-text-fill: #d4a843;
+}
+
+/* === COMBOBOX === */
+.combo-box {
+    -fx-background-color: #1a2235;
+    -fx-border-color: #2a3550;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 4 8;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #eef0f4;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #1e2a3d;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: rgba(212,168,67,0.15);
+}
+
+.combo-box .arrow {
+    -fx-background-color: #8893a7;
+}
+
+/* === PAYMENT METHOD CARDS === */
+.payment-card {
+    -fx-background-color: #151c2c;
+    -fx-border-color: #2a3550;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+    -fx-cursor: hand;
+}
+
+.payment-card:hover {
+    -fx-border-color: #d4a843;
+    -fx-background-color: #1e2a3d;
+}
+
+.payment-card-selected {
+    -fx-background-color: rgba(212,168,67,0.1);
+    -fx-border-color: #d4a843;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+}
+
+/* === TICKET CARD === */
+.ticket-card {
+    -fx-background-color: linear-gradient(to bottom right, #1e2a3d, #151c2c);
+    -fx-background-radius: 16;
+    -fx-padding: 24;
+    -fx-border-color: #d4a843;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,67,0.15), 20, 0, 0, 6);
+}
+
+/* === HISTORY CARD === */
+.history-card {
+    -fx-background-color: #151c2c;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+    -fx-border-color: #2a3550;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+}
+
+.history-card:hover {
+    -fx-background-color: #1e2a3d;
+    -fx-border-color: #3a4560;
+}
+
+/* === STATUS BADGE === */
+.badge-success {
+    -fx-background-color: rgba(67,160,71,0.15);
+    -fx-text-fill: #66bb6a;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.badge-pending {
+    -fx-background-color: rgba(212,168,67,0.15);
+    -fx-text-fill: #d4a843;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* === CHIP / TAG === */
+.chip {
+    -fx-background-color: rgba(212,168,67,0.12);
+    -fx-text-fill: #d4a843;
+    -fx-background-radius: 20;
+    -fx-padding: 6 14;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* === LOGIN/AUTH BACKGROUND === */
+.auth-bg {
+    -fx-background-color: linear-gradient(to bottom right, #0a0e17, #121a2e, #0a0e17);
+}
+
+/* === TIMESLOT BUTTON === */
+.timeslot-btn {
+    -fx-background-color: #1e2a3d;
+    -fx-text-fill: #eef0f4;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 20;
+    -fx-background-radius: 10;
+    -fx-border-color: #2a3550;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+.timeslot-btn:hover {
+    -fx-border-color: #d4a843;
+    -fx-background-color: rgba(212,168,67,0.08);
+}
+
+.timeslot-selected {
+    -fx-background-color: rgba(212,168,67,0.15);
+    -fx-border-color: #d4a843;
+    -fx-text-fill: #d4a843;
+    -fx-border-width: 2;
+}
+
+/* === PRICE TAG === */
+.price-tag {
+    -fx-text-fill: #d4a843;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* === FADE ANIMATION HELPER === */
+.fade-root {
+    -fx-opacity: 1;
 }
