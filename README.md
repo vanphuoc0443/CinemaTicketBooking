@@ -75,5 +75,6 @@ src/main/resources/
 └── ui/view/        # FXML Layouts
 ```
 ---
-*Built with ❤️ by vanphuoc0443 and *
+*Built with ❤️ by vanphuoc0443 and minh656512-debug*
+
 
