@@ -1,0 +1,12 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fxcontroller.PaymentController"
+      spacing="10" alignment="CENTER">
+
+    <Label text="Select Payment Method"/>
+    <ComboBox fx:id="methodBox"/>
+    <Button text="Pay" onAction="#pay"/>
+</VBox>

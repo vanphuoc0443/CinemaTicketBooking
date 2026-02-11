@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="551" prefWidth="365"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fxcontroller.RegisterController">
+
+    <ImageView fitHeight="551" fitWidth="388" pickOnBounds="true">
+        <image>
+            <Image url="@../../image/978d4354dc8c633339d646e517918ca0.jpg"/>
+        </image>
+    </ImageView>
+
+    <VBox alignment="CENTER" spacing="15"
+          AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0">
+
+        <Label text="Create Account" textFill="#b71c1c">
+            <font>
+                <Font name="System Bold" size="20"/>
+            </font>
+        </Label>
+
+        <TextField fx:id="txtUsername" promptText="Username" maxWidth="250"/>
+        <TextField fx:id="txtEmail" promptText="Email" maxWidth="250"/>
+
+        <PasswordField fx:id="txtPassword" promptText="Password" maxWidth="250"/>
+        <PasswordField fx:id="txtConfirm" promptText="Confirm Password" maxWidth="250"/>
+
+        <Button text="Register" onAction="#handleRegister"
+                style="-fx-background-color: #C62828;" textFill="WHITE" maxWidth="250"/>
+
+        <Label fx:id="lblMessage" style="-fx-text-fill:red;"/>
+
+    </VBox>
+</AnchorPane>

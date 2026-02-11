@@ -1,0 +1,11 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fxcontroller.SummaryController"
+      spacing="10" alignment="CENTER">
+
+    <Label fx:id="seatLabel"/>
+    <Label fx:id="priceLabel"/>
+    <Button text="Proceed to Payment" onAction="#goPayment"/>
+</VBox>

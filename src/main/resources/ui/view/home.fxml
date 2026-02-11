@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fxcontroller.HomeController"
+            prefWidth="360" prefHeight="800"
+            style="-fx-background-color:#121212;">
+
+    <!-- ===== TOP BAR ===== -->
+    <top>
+        <HBox spacing="15" style="-fx-background-color:#1f1f1f;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="🎬 CINEMA"
+                   style="-fx-text-fill:#e50914; -fx-font-size:18px; -fx-font-weight:bold;"/>
+
+            <TextField fx:id="searchField"
+                       promptText="Search..."
+                       prefWidth="180"/>
+
+            <Button text="Profile"/>
+        </HBox>
+    </top>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <center>
+        <VBox spacing="15">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+
+            <Label text="Now Showing"
+                   style="-fx-text-fill:white; -fx-font-size:16px; -fx-font-weight:bold;"/>
+
+            <HBox spacing="15">
+
+                <VBox spacing="5">
+                    <ImageView fx:id="movie1" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
+                        <image>
+                            <Image url="@../../image/poster1.jpg"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Movie 1" style="-fx-text-fill:white;"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <ImageView fx:id="movie2" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
+                        <image>
+                            <Image url="@../../image/poster2.jpg"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Movie 2" style="-fx-text-fill:white;"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <ImageView fx:id="movie3" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
+                        <image>
+                            <Image url="@../../image/poster3.jpg"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Movie 3" style="-fx-text-fill:white;"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <ImageView fx:id="movie4" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
+                        <image>
+                            <Image url="@../../image/poster4.jpg"/>
+                        </image>
+                    </ImageView>
+                    <Label text="Movie 4" style="-fx-text-fill:white;"/>
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,13 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fxcontroller.ShowtimeController"
+      spacing="10">
+
+    <Label text="Choose Showtime"/>
+    <ListView fx:id="showtimeList"/>
+    <Button text="Next" onAction="#goSeat"/>
+
+</VBox>

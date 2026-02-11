@@ -1,0 +1,13 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fxcontroller.MovieDetailController"
+      spacing="10" alignment="CENTER">
+
+    <Label fx:id="movieTitle" text="Movie Title"/>
+    <Label fx:id="movieInfo" text="Genre | Duration"/>
+
+    <Button text="Book Ticket" onAction="#bookTicket"/>
+
+</VBox>
