@@ -1,73 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="fxcontroller.SeatController"
             prefWidth="360" prefHeight="700"
             style="-fx-background-color: #121212;">
 
-    <!-- Screen Label -->
-    <Label text="SCREEN"
+    <Label fx:id="screenLabel" text="SCREEN"
            layoutX="140" layoutY="20"
            style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" />
 
     <Separator layoutX="30" layoutY="50" prefWidth="300"/>
 
-    <!-- Seats -->
-    <GridPane layoutX="50" layoutY="90" hgap="12" vgap="20">
-
-        <!-- Row A -->
-        <Label text="A" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill:white;"/>
-        <Button fx:id="A1" text=" " GridPane.rowIndex="0" GridPane.columnIndex="1" onAction="#selectSeat"/>
-        <Button fx:id="A2" text=" " GridPane.rowIndex="0" GridPane.columnIndex="2" onAction="#selectSeat"/>
-        <Button fx:id="A3" text=" " GridPane.rowIndex="0" GridPane.columnIndex="3" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="A4" text=" " GridPane.rowIndex="0" GridPane.columnIndex="4" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="A5" text=" " GridPane.rowIndex="0" GridPane.columnIndex="5" onAction="#selectSeat"/>
-        <Button fx:id="A6" text=" " GridPane.rowIndex="0" GridPane.columnIndex="6" onAction="#selectSeat"/>
-
-        <!-- Row B -->
-        <Label text="B" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill:white;"/>
-        <Button fx:id="B1" text=" " GridPane.rowIndex="1" GridPane.columnIndex="1" onAction="#selectSeat"/>
-        <Button fx:id="B2" text=" " GridPane.rowIndex="1" GridPane.columnIndex="2" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="B3" text=" " GridPane.rowIndex="1" GridPane.columnIndex="3" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="B4" text=" " GridPane.rowIndex="1" GridPane.columnIndex="4" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="B5" text=" " GridPane.rowIndex="1" GridPane.columnIndex="5" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="B6" text=" " GridPane.rowIndex="1" GridPane.columnIndex="6" onAction="#selectSeat"/>
-
-        <!-- Row C -->
-        <Label text="C" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill:white;"/>
-        <Button fx:id="C1" text=" " GridPane.rowIndex="2" GridPane.columnIndex="1" onAction="#selectSeat"/>
-        <Button fx:id="C2" text=" " GridPane.rowIndex="2" GridPane.columnIndex="2" onAction="#selectSeat"/>
-        <Button fx:id="C3" text=" " GridPane.rowIndex="2" GridPane.columnIndex="3" onAction="#selectSeat"/>
-        <Button fx:id="C4" text=" " GridPane.rowIndex="2" GridPane.columnIndex="4" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="C5" text=" " GridPane.rowIndex="2" GridPane.columnIndex="5" style="-fx-background-color: #d32f2f;" disable="true"/>
-        <Button fx:id="C6" text=" " GridPane.rowIndex="2" GridPane.columnIndex="6" onAction="#selectSeat"/>
-
+    <GridPane fx:id="seatGrid" layoutX="30" layoutY="90" hgap="12" vgap="20">
+        <!-- Seats will be loaded dynamically by SeatController -->
     </GridPane>
 
     <!-- Legend -->
-    <HBox layoutX="80" layoutY="350" spacing="20">
+    <HBox layoutX="50" layoutY="400" spacing="15">
         <HBox spacing="5">
             <Button style="-fx-background-color: #4caf50;" prefWidth="20" prefHeight="20"/>
             <Label text="Available" style="-fx-text-fill:white;"/>
         </HBox>
-
         <HBox spacing="5">
-            <Button style="-fx-background-color: #d32f2f;" prefWidth="20" prefHeight="20"/>
-            <Label text="Booked" style="-fx-text-fill:white;"/>
+             <Button style="-fx-background-color: #d32f2f;" prefWidth="20" prefHeight="20"/>
+             <Label text="Booked" style="-fx-text-fill:white;"/>
+        </HBox>
+         <HBox spacing="5">
+             <Button style="-fx-background-color: #fdd835;" prefWidth="20" prefHeight="20"/>
+             <Label text="Selected" style="-fx-text-fill:white;"/>
         </HBox>
     </HBox>
 
-    <!-- Continue Button -->
-    <Button text="Continue"
-            layoutX="120" layoutY="420"
-            prefWidth="120"
-            onAction="#continueBooking"
+    <HBox layoutX="30" layoutY="450" spacing="20">
+        <Label fx:id="selectedCountLabel" text="Selected: 0" style="-fx-text-fill: white; -fx-font-size: 14px;"/>
+        <Label fx:id="totalPriceLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Button fx:id="continueBtn" text="Continue to Summary"
+            layoutX="80" layoutY="500" prefWidth="200"
+            onAction="#goSummary"
             style="-fx-background-color: #e50914; -fx-text-fill:white; -fx-font-size:16px; -fx-font-weight:bold;"/>
 
 </AnchorPane>
