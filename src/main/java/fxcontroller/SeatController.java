@@ -1,163 +1,178 @@
 package fxcontroller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.Node;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.net.URL;
+import java.util.*;
 
-public class SeatController {
+public class SeatController implements Initializable {
 
     @FXML
     private GridPane seatGrid;
+
+    @FXML
+    private Label selectedSeatLabel;
+
     @FXML
     private Label totalPriceLabel;
-    @FXML
-    private Label selectedCountLabel;
-    @FXML
-    private Label screenLabel;
-    @FXML
-    private Button continueBtn;
-
-    // Hardcoded buttons for the old static interface
-    @FXML
-    private Button A1, A2, A5, A6;
-    @FXML
-    private Button B1, B6;
-    @FXML
-    private Button C1, C2, C3, C6;
-
-    // Shared state for other controllers (Changed to public static as
-    // requested/needed)
-    public static Set<String> selectedSeats = new HashSet<>();
-    public static int totalPrice = 0;
-
-    private final int PRICE_PER_SEAT = 50000;
-    private final String MAU_TRONG = "#4caf50"; // Green
-    private final String MAU_CHON = "#2196f3"; // Blue (or #fdd835 yellow in dynamic? sticking to old code style if
-                                               // possible)
-    // Old code (Step 1118) used #4caf50 and #2196f3.
 
     @FXML
-    public void initialize() {
-        // Initialize hardcoded buttons if they exist
-        if (A1 != null) {
-            initSeat(A1);
-            initSeat(A2);
-            initSeat(A5);
-            initSeat(A6);
-            initSeat(B1);
-            initSeat(B6);
-            initSeat(C1);
-            initSeat(C2);
-            initSeat(C3);
-            initSeat(C6);
+    private Label movieTitleLabel;
+
+    @FXML
+    private Label showtimeLabel;
+
+    // CẤU HÌNH RẠP (giống app cinema thật)
+    private final int ROWS = 6;
+    private final int COLS = 8;
+    private final int SEAT_PRICE = 75000;
+
+    // Dữ liệu ghế
+    private final Set<String> selectedSeats = new HashSet<>();
+    private final Set<String> bookedSeats = new HashSet<>();
+
+    // Dữ liệu nhận từ màn trước (Showtime/Home)
+    private String movieTitle = "Unknown Movie";
+    private String showtime = "Unknown Showtime";
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        loadBookedSeatsFromDB();
+        generateSeatMap();
+        updateSelectionInfo();
+    }
+
+    /**
+     * METHOD QUAN TRỌNG:
+     * Dùng để nhận dữ liệu từ ShowtimeController/HomeController
+     */
+    public void setShowtimeData(String movieTitle, String showtime) {
+        this.movieTitle = movieTitle;
+        this.showtime = showtime;
+
+        movieTitleLabel.setText(movieTitle);
+        showtimeLabel.setText(showtime);
+    }
+
+    // Giả lập lấy ghế đã đặt từ database
+    private void loadBookedSeatsFromDB() {
+        // TODO: Thay bằng query DB thật (theo showtime_id)
+        bookedSeats.add("A3");
+        bookedSeats.add("B5");
+        bookedSeats.add("C2");
+        bookedSeats.add("D7");
+    }
+
+    private void generateSeatMap() {
+        seatGrid.getChildren().clear();
+
+        for (int row = 0; row < ROWS; row++) {
+            char rowChar = (char) ('A' + row);
+
+            for (int col = 1; col <= COLS; col++) {
+                String seatId = rowChar + String.valueOf(col);
+
+                Button seatBtn = new Button(seatId);
+                seatBtn.setPrefSize(40, 40);
+                seatBtn.setStyle(getSeatStyle(seatId));
+
+                if (bookedSeats.contains(seatId)) {
+                    seatBtn.setDisable(true);
+                } else {
+                    seatBtn.setOnAction(e -> handleSeatSelection(seatBtn, seatId));
+                }
+
+                seatGrid.add(seatBtn, col - 1, row);
+            }
         }
-        updateInfo();
     }
 
-    private void initSeat(Button b) {
-        b.setStyle("-fx-background-color:" + MAU_TRONG);
-    }
-
-    @FXML
-    public void selectSeat(ActionEvent event) {
-        Button seat = (Button) event.getSource();
-        String id = seat.getId();
-
-        if (selectedSeats.contains(id)) {
-            selectedSeats.remove(id);
-            seat.setStyle("-fx-background-color:" + MAU_TRONG);
+    private void handleSeatSelection(Button seatBtn, String seatId) {
+        if (selectedSeats.contains(seatId)) {
+            selectedSeats.remove(seatId);
+            seatBtn.setStyle(getAvailableSeatStyle());
         } else {
-            selectedSeats.add(id);
-            seat.setStyle("-fx-background-color:" + MAU_CHON);
+            selectedSeats.add(seatId);
+            seatBtn.setStyle(getSelectedSeatStyle());
         }
-        updateInfo();
+        updateSelectionInfo();
     }
 
-    private void updateInfo() {
-        totalPrice = selectedSeats.size() * PRICE_PER_SEAT;
-        if (selectedCountLabel != null) {
-            selectedCountLabel.setText("Selected: " + selectedSeats.size());
-        }
-        if (totalPriceLabel != null) {
-            totalPriceLabel.setText(String.format("%,d VNĐ", totalPrice));
-        }
-    }
-
-    @FXML
-    public void goSummary(ActionEvent event) { // Renamed continueBooking to match FXML if needed, or keep
-                                               // continueBooking?
-        // Step 1118 had continueBooking() method.
-        // But seat.fxml (Step 934 old version) had onAction="#continueBooking".
-        // Step 934 also had hardcoded A1, A2...
-        // So I should keep continueBooking.
-
-        continueBookingImpl(event);
-    }
-
-    @FXML
-    public void continueBooking(ActionEvent event) { // supporting both names just in case
-        continueBookingImpl(event);
-    }
-
-    @FXML
-    public void continueBooking() { // supporting no-arg if used
-        continueBookingImpl(null);
-    }
-
-    private void continueBookingImpl(ActionEvent event) {
+    private void updateSelectionInfo() {
         if (selectedSeats.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setContentText("Bạn chưa chọn ghế!");
-            alert.show();
+            selectedSeatLabel.setText("Ghế đã chọn: Chưa chọn");
+        } else {
+            List<String> sortedSeats = new ArrayList<>(selectedSeats);
+            Collections.sort(sortedSeats);
+            selectedSeatLabel.setText("Ghế đã chọn: " + String.join(", ", sortedSeats));
+        }
+
+        int total = selectedSeats.size() * SEAT_PRICE;
+        totalPriceLabel.setText("Tổng tiền: " + String.format("%,d", total) + " VND");
+    }
+
+    private String getSeatStyle(String seatId) {
+        if (bookedSeats.contains(seatId)) {
+            // Ghế đã đặt (đỏ)
+            return "-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-background-radius: 8;";
+        }
+        return getAvailableSeatStyle();
+    }
+
+    private String getAvailableSeatStyle() {
+        // Ghế trống (xám)
+        return "-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;";
+    }
+
+    private String getSelectedSeatStyle() {
+        // Ghế đang chọn (vàng - giống CGV style)
+        return "-fx-background-color: #ffd369; -fx-text-fill: black; -fx-background-radius: 8;";
+    }
+
+    @FXML
+    private void handleContinuePayment() {
+        if (selectedSeats.isEmpty()) {
+            selectedSeatLabel.setText("Vui lòng chọn ít nhất 1 ghế!");
             return;
         }
 
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ui/view/summary.fxml"));
-            // If event is null, we can't get stage easily. But usually triggered by button.
-            // If triggered by button, event is not null.
-            if (event != null) {
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-            } else {
-                // Fallback or old logic?
-                // Old code (Step 1118) used continueBooking() void NO ARGS.
-                // And it showed Alert with content. It DID NOT navigate?
-                // Wait. Step 1118 lines 101-106: It navigates using event!!!!!
-                // But method signature was `public void continueBooking()`.
-                // How did it get `event`?
-                // `Stage stage = (Stage) ((Node) event.getSource())...`
-                // usage of `event` implies it was passed in?
-                // But signature `public void continueBooking()` has NO args.
-                // Java Compile Error: `event` cannot be resolved.
-                // So the code in Step 1118 WAS BROKEN?
-                // Or I misread it.
-                // Step 1118 Line 58: `public void continueBooking() {`
-                // Line 104: `((Node) event.getSource())`
-                // YES, it used `event` but `event` was NOT defined in method.
-                // This `SeatController` (Step 1118) was broken code!
-                // That explains why build failed?
-                // Build failure (Step 1093) was `selectedSeats private access`.
-                // It didn't mention `event`. Maybe it didn't reach that line or `event` was a
-                // field? (No field named event).
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ui/view/payment.fxml")
+            );
+            Parent root = loader.load();
 
-                // I MUST fix this.
-                // I will create `public void continueBooking(ActionEvent event)`.
-            }
-        } catch (IOException e) {
+            // Lấy controller
+            PaymentController paymentController = loader.getController();
+
+            // Convert ghế thành chuỗi: A1, A2, B3
+            List<String> sortedSeats = new ArrayList<>(selectedSeats);
+            Collections.sort(sortedSeats);
+            String seatsString = String.join(", ", sortedSeats);
+
+            // Truyền đúng format KHỚP với PaymentController (rất quan trọng)
+            paymentController.setPaymentData(
+                    movieTitle,                 // tên phim
+                    showtime,                   // giờ chiếu
+                    "Phòng 3",                  // room (có thể truyền động sau)
+                    seatsString,                // ghế dạng String
+                    "Không",                   // combo (tạm)
+                    selectedSeats.size() * SEAT_PRICE  // tổng tiền
+            );
+
+            Stage stage = (Stage) seatGrid.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
