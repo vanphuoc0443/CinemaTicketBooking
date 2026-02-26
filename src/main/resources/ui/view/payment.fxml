@@ -1,12 +1,125 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.PaymentController"
-      spacing="10" alignment="CENTER">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <Label text="Select Payment Method"/>
-    <ComboBox fx:id="methodBox"/>
-    <Button text="Pay" onAction="#pay"/>
-</VBox>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefWidth="390.0" prefHeight="844.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fxcontroller.PaymentController"
+            style="-fx-background-color: #020617;">
+
+    <children>
+
+        <!-- HEADER -->
+        <HBox prefWidth="390.0" prefHeight="90.0"
+              alignment="CENTER_LEFT"
+              style="-fx-background-color: linear-gradient(to bottom, #020617, #0F172A);">
+            <padding>
+                <Insets top="35.0" left="20.0" right="20.0" bottom="15.0"/>
+            </padding>
+
+            <Button fx:id="btnBack"
+                    text="←"
+                    style="-fx-background-color: transparent; -fx-text-fill: #38BDF8; -fx-font-size: 22px;"/>
+
+            <Label text="Thanh toán"
+                   HBox.hgrow="ALWAYS"
+                   style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- MAIN CONTENT -->
+        <ScrollPane layoutY="90.0"
+                    prefWidth="390.0"
+                    prefHeight="754.0"
+                    fitToWidth="true"
+                    style="-fx-background: transparent; -fx-background-color: transparent;">
+
+            <content>
+                <VBox spacing="20.0">
+                    <padding>
+                        <Insets top="20.0" left="15.0" right="15.0" bottom="30.0"/>
+                    </padding>
+
+                    <!-- MOVIE INFO CARD -->
+                    <VBox spacing="8.0"
+                          style="-fx-background-color: #1E293B; -fx-background-radius: 20; -fx-padding: 18;">
+                        <Label text="🎬 Thông tin phim"
+                               style="-fx-text-fill: #38BDF8; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <Label fx:id="lblMovieName"
+                               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                        <Label fx:id="lblShowtime"
+                               style="-fx-text-fill: #94A3B8; -fx-font-size: 14px;"/>
+
+                        <Label fx:id="lblRoom"
+                               style="-fx-text-fill: #94A3B8; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <!-- TICKET INFO -->
+                    <VBox spacing="8.0"
+                          style="-fx-background-color: #1E293B; -fx-background-radius: 20; -fx-padding: 18;">
+                        <Label text="🎟 Vé &amp; Ghế"
+                               style="-fx-text-fill: #F43F5E; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                        <Label fx:id="lblSeats"
+                               style="-fx-text-fill: white; -fx-font-size: 15px;"/>
+
+                        <Label fx:id="lblCombo"
+                               style="-fx-text-fill: white; -fx-font-size: 15px;"/>
+                    </VBox>
+
+                    <!-- PAYMENT METHOD -->
+                    <VBox spacing="12.0">
+                        <Label text="💳 Phương thức thanh toán"
+                               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+                        <Button fx:id="btnMomo"
+                                text="📱 Ví MoMo"
+                                prefHeight="50.0"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #D82D8B; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 18; -fx-cursor: hand;"/>
+
+                        <Button fx:id="btnZaloPay"
+                                text="💙 ZaloPay"
+                                prefHeight="50.0"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #0068FF; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 18; -fx-cursor: hand;"/>
+
+                        <Button fx:id="btnCard"
+                                text="🏦 ATM / VISA / MasterCard"
+                                prefHeight="50.0"
+                                maxWidth="Infinity"
+                                style="-fx-background-color: #1E40AF; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 18; -fx-cursor: hand;"/>
+                    </VBox>
+
+                    <!-- TOTAL -->
+                    <HBox alignment="CENTER_LEFT"
+                          spacing="10.0"
+                          style="-fx-background-color: #020617; -fx-background-radius: 18; -fx-padding: 18; -fx-border-color: #334155; -fx-border-radius: 18;">
+                        <Label text="Tổng thanh toán"
+                               HBox.hgrow="ALWAYS"
+                               style="-fx-text-fill: #94A3B8; -fx-font-size: 16px;"/>
+
+                        <Label fx:id="lblTotal"
+                               style="-fx-text-fill: #FACC15; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </HBox>
+
+                    <!-- CONFIRM BUTTON -->
+                    <Button fx:id="btnConfirm"
+                            text="XÁC NHẬN THANH TOÁN"
+                            prefHeight="55.0"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: linear-gradient(to right, #22C55E, #16A34A); -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;"/>
+
+                    <Label fx:id="lblStatus"
+                           style="-fx-text-fill: #38BDF8; -fx-font-size: 14px;"/>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+
+    </children>
+</AnchorPane>

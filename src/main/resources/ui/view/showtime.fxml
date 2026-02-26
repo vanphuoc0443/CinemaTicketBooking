@@ -1,13 +1,112 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.ShowtimeController"
-      spacing="10">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 
-    <Label text="Choose Showtime"/>
-    <ListView fx:id="showtimeList"/>
-    <Button text="Next" onAction="#goSeat"/>
+<AnchorPane prefWidth="390" prefHeight="844"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fxcontroller.ShowtimeController"
+            style="-fx-background-color: linear-gradient(to bottom, #0F172A, #020617);">
 
-</VBox>
+    <VBox spacing="18"
+          AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0">
+
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Button fx:id="btnBack"
+                    text="←"
+                    onAction="#handleBack"
+                    style="-fx-background-color: transparent;
+                           -fx-text-fill: #38BDF8;
+                           -fx-font-size: 22;
+                           -fx-cursor: hand;"/>
+
+            <Label text="Chọn suất chiếu"
+                   style="-fx-text-fill: white;
+                          -fx-font-size: 24;
+                          -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- MOVIE CARD -->
+        <HBox spacing="15"
+              style="-fx-background-color: #1E293B;
+                     -fx-background-radius: 20;
+                     -fx-padding: 15;">
+
+            <ImageView fx:id="imgPoster"
+                       fitWidth="90"
+                       fitHeight="130"
+                       preserveRatio="true"
+                       style="-fx-background-radius: 15;"/>
+
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label fx:id="lblMovieTitle"
+                       text="Movie Title"
+                       style="-fx-text-fill: white;
+                              -fx-font-size: 20;
+                              -fx-font-weight: bold;"/>
+
+                <Label fx:id="lblGenre"
+                       text="Action | 120 phút"
+                       style="-fx-text-fill: #94A3B8;
+                              -fx-font-size: 13;"/>
+
+                <Label fx:id="lblRelease"
+                       text="Khởi chiếu: 2024"
+                       style="-fx-text-fill: #94A3B8;
+                              -fx-font-size: 13;"/>
+            </VBox>
+        </HBox>
+
+        <!-- DATE SELECT -->
+        <Label text="Chọn ngày"
+               style="-fx-text-fill: #38BDF8;
+                      -fx-font-size: 16;
+                      -fx-font-weight: bold;"/>
+
+        <ScrollPane hbarPolicy="NEVER"
+                    vbarPolicy="NEVER"
+                    fitToHeight="true"
+                    style="-fx-background: transparent;
+                           -fx-background-color: transparent;">
+
+            <HBox fx:id="dateContainer" spacing="10"/>
+        </ScrollPane>
+
+        <!-- CINEMA -->
+        <Label text="Suất chiếu"
+               style="-fx-text-fill: #38BDF8;
+                      -fx-font-size: 16;
+                      -fx-font-weight: bold;"/>
+
+        <!-- SHOWTIME LIST -->
+        <ScrollPane fitToWidth="true"
+                    style="-fx-background: transparent;
+                           -fx-background-color: transparent;">
+
+            <VBox fx:id="showtimeContainer" spacing="15"/>
+        </ScrollPane>
+
+        <!-- CONTINUE BUTTON -->
+        <Button fx:id="btnContinue"
+                text="TIẾP TỤC CHỌN GHẾ"
+                prefHeight="55"
+                onAction="#handleContinue"
+                disable="true"
+                style="-fx-background-color: linear-gradient(to right,#FF512F,#F09819);
+                       -fx-text-fill: white;
+                       -fx-font-size: 18;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 25;
+                       -fx-cursor: hand;"/>
+
+    </VBox>
+</AnchorPane>

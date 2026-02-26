@@ -1,43 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="551" prefWidth="365"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="fxcontroller.RegisterController">
+<AnchorPane prefHeight="844.0" prefWidth="390.0" style="-fx-background-color: #020617;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontroller.RegisterController">
 
-    <ImageView fitHeight="551" fitWidth="388" pickOnBounds="true">
-        <image>
-            <Image url="@../../image/978d4354dc8c633339d646e517918ca0.jpg"/>
-        </image>
-    </ImageView>
+    <children>
 
-    <VBox alignment="CENTER" spacing="15"
-          AnchorPane.topAnchor="0"
-          AnchorPane.bottomAnchor="0"
-          AnchorPane.leftAnchor="0"
-          AnchorPane.rightAnchor="0">
+        <VBox prefHeight="844" prefWidth="390" style="-fx-background-color: linear-gradient(to bottom, #020617, #0F172A);">
 
-        <Label text="Create Account" textFill="#b71c1c">
-            <font>
-                <Font name="System Bold" size="20"/>
-            </font>
-        </Label>
+            <!-- HEADER -->
+            <VBox alignment="CENTER" prefHeight="200" spacing="10">
+                <padding>
+                    <Insets top="70" />
+                </padding>
 
-        <TextField fx:id="txtUsername" promptText="Username" maxWidth="250"/>
-        <TextField fx:id="txtEmail" promptText="Email" maxWidth="250"/>
+                <Label style="-fx-text-fill: white; -fx-font-size: 26px; -fx-font-weight: bold;" text="🎬 Cinema App" />
 
-        <PasswordField fx:id="txtPassword" promptText="Password" maxWidth="250"/>
-        <PasswordField fx:id="txtConfirm" promptText="Confirm Password" maxWidth="250"/>
+                <Label style="-fx-text-fill: #94A3B8;" text="Đăng ký để đặt vé nhanh hơn" />
+            </VBox>
 
-        <Button text="Register" onAction="#handleRegister"
-                style="-fx-background-color: #C62828;" textFill="WHITE" maxWidth="250"/>
+            <!-- FORM -->
+            <VBox spacing="16" style="                     -fx-background-color: #1E293B;                     -fx-background-radius: 30 30 0 0;                     -fx-padding: 30;                   ">
 
-        <Label fx:id="lblMessage" style="-fx-text-fill:red;"/>
+                <TextField fx:id="txtName" prefHeight="45" promptText="Họ tên" style="-fx-background-color:#020617; -fx-text-fill:white; -fx-prompt-text-fill:#64748B; -fx-background-radius:15; -fx-border-color:#334155; -fx-border-radius:15;" />
 
-    </VBox>
+                <TextField fx:id="txtEmail" prefHeight="45" promptText="Email" style="-fx-background-color:#020617; -fx-text-fill:white; -fx-prompt-text-fill:#64748B; -fx-background-radius:15; -fx-border-color:#334155; -fx-border-radius:15;" />
+
+                <PasswordField fx:id="txtPassword" prefHeight="45" promptText="Mật khẩu" style="-fx-background-color:#020617; -fx-text-fill:white; -fx-prompt-text-fill:#64748B; -fx-background-radius:15; -fx-border-color:#334155; -fx-border-radius:15;" />
+
+                <PasswordField fx:id="txtConfirmPassword" prefHeight="45" promptText="Xác nhận mật khẩu" style="-fx-background-color:#020617; -fx-text-fill:white; -fx-prompt-text-fill:#64748B; -fx-background-radius:15; -fx-border-color:#334155; -fx-border-radius:15;" />
+
+                <Label fx:id="lblMessage" style="-fx-font-size:13px;" textFill="#F43F5E" />
+
+                <Button fx:id="btnRegister" maxWidth="Infinity" prefHeight="50" style="                             -fx-background-color: linear-gradient(to right, #22C55E, #16A34A);                             -fx-text-fill: white;                             -fx-font-size: 16px;                             -fx-font-weight: bold;                             -fx-background-radius: 18;                         " text="ĐĂNG KÝ" />
+
+                <Hyperlink fx:id="btnGoLogin" style="-fx-text-fill:#38BDF8;" text="Đã có tài khoản? Đăng nhập" />
+
+            </VBox>
+        </VBox>
+
+    </children>
 </AnchorPane>

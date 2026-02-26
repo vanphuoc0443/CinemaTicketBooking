@@ -1,13 +1,143 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.MovieDetailController"
-      spacing="10" alignment="CENTER">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 
-    <Label fx:id="movieTitle" text="Movie Title"/>
-    <Label fx:id="movieInfo" text="Genre | Duration"/>
+<AnchorPane prefWidth="390" prefHeight="844"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fxcontroller.MovieDetailController"
+            style="-fx-background-color: linear-gradient(to bottom, #0F172A, #020617);">
 
-    <Button text="Book Ticket" onAction="#bookTicket"/>
+    <VBox spacing="16"
+          AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0">
 
-</VBox>
+        <padding>
+            <Insets top="18" right="18" bottom="18" left="18"/>
+        </padding>
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Button fx:id="btnBack"
+                    text="←"
+                    onAction="#handleBack"
+                    style="-fx-background-color: transparent;
+                           -fx-text-fill: #38BDF8;
+                           -fx-font-size: 22;
+                           -fx-cursor: hand;"/>
+
+            <Label text="Chi tiết phim"
+                   style="-fx-text-fill: white;
+                          -fx-font-size: 22;
+                          -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- POSTER + BASIC INFO -->
+        <HBox spacing="16"
+              style="-fx-background-color: #1E293B;
+                     -fx-background-radius: 20;
+                     -fx-padding: 16;">
+
+            <ImageView fx:id="imgPoster"
+                       fitWidth="110"
+                       fitHeight="160"
+                       preserveRatio="true"/>
+
+            <VBox spacing="8">
+                <Label fx:id="lblTitle"
+                       text="Movie Title"
+                       wrapText="true"
+                       style="-fx-text-fill: white;
+                              -fx-font-size: 20;
+                              -fx-font-weight: bold;"/>
+
+                <Label fx:id="lblGenre"
+                       text="Action | Sci-fi"
+                       style="-fx-text-fill: #38BDF8;
+                              -fx-font-size: 14;"/>
+
+                <Label fx:id="lblDuration"
+                       text="120 phút"
+                       style="-fx-text-fill: #94A3B8;
+                              -fx-font-size: 13;"/>
+
+                <Label fx:id="lblRating"
+                       text="⭐ 8.5/10"
+                       style="-fx-text-fill: #FACC15;
+                              -fx-font-size: 14;
+                              -fx-font-weight: bold;"/>
+            </VBox>
+        </HBox>
+
+        <!-- DESCRIPTION CARD -->
+        <VBox spacing="10"
+              style="-fx-background-color: #1E293B;
+                     -fx-background-radius: 20;
+                     -fx-padding: 18;">
+
+            <Label text="Nội dung phim"
+                   style="-fx-text-fill: #38BDF8;
+                          -fx-font-size: 16;
+                          -fx-font-weight: bold;"/>
+
+            <ScrollPane fitToWidth="true"
+                        style="-fx-background-color: transparent;
+                               -fx-background: transparent;">
+
+                <content>
+                    <Label fx:id="lblDescription"
+                           wrapText="true"
+                           text="Mô tả phim..."
+                           style="-fx-text-fill: #CBD5F5;
+                                  -fx-font-size: 14;"/>
+                </content>
+            </ScrollPane>
+        </VBox>
+
+        <!-- MOVIE INFO -->
+        <VBox spacing="12"
+              style="-fx-background-color: #020617;
+                     -fx-border-color: #334155;
+                     -fx-border-radius: 20;
+                     -fx-background-radius: 20;
+                     -fx-padding: 18;">
+
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Đạo diễn:"
+                       style="-fx-text-fill: #94A3B8;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblDirector"
+                       text="Unknown"
+                       style="-fx-text-fill: white;"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Khởi chiếu:"
+                       style="-fx-text-fill: #94A3B8;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblReleaseDate"
+                       text="2025"
+                       style="-fx-text-fill: white;"/>
+            </HBox>
+
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- BOOK BUTTON (MAIN CTA như app CGV) -->
+        <Button fx:id="btnBook"
+                text="ĐẶT VÉ NGAY"
+                prefHeight="60"
+                onAction="#handleBookTicket"
+                style="-fx-background-color: linear-gradient(to right,#FF512F,#F09819);
+                       -fx-text-fill: white;
+                       -fx-font-size: 18;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 30;
+                       -fx-cursor: hand;"/>
+
+    </VBox>
+</AnchorPane>

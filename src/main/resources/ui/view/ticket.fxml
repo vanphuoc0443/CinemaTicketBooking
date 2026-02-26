@@ -1,10 +1,137 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.TicketController"
-      spacing="10" alignment="CENTER">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <Label fx:id="ticketLabel"/>
-    <Button text="View History" onAction="#goHistory"/>
-</VBox>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefWidth="390" prefHeight="800"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="fxcontroller.TicketController"
+            style="-fx-background-color: linear-gradient(to bottom, #020617, #0f172a);">
+
+    <VBox spacing="16" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="18" AnchorPane.rightAnchor="18">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Button fx:id="btnBack"
+                    text="←"
+                    prefWidth="42"
+                    prefHeight="42"
+                    style="-fx-background-color: #1E293B;
+                           -fx-text-fill: white;
+                           -fx-font-size: 18;
+                           -fx-background-radius: 12;
+                           -fx-cursor: hand;"/>
+
+            <Label text="Vé của bạn"
+                   style="-fx-text-fill: white;
+                          -fx-font-size: 22px;
+                          -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- TICKET CARD (MAIN) -->
+        <VBox spacing="14"
+              style="-fx-background-color: #0F172A;
+                     -fx-background-radius: 24;
+                     -fx-padding: 18;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 25, 0.3, 0, 10);">
+
+            <!-- Movie Poster + Info -->
+            <HBox spacing="16">
+                <ImageView fx:id="imgPoster"
+                           fitWidth="110"
+                           fitHeight="160"
+                           preserveRatio="false"
+                           style="-fx-background-radius: 16;"/>
+
+                <VBox spacing="8">
+                    <Label fx:id="lblMovieTitle"
+                           text="Movie Title"
+                           wrapText="true"
+                           style="-fx-text-fill: white;
+                                  -fx-font-size: 18;
+                                  -fx-font-weight: bold;"/>
+
+                    <Label fx:id="lblGenre"
+                           text="Action, Adventure"
+                           style="-fx-text-fill: #F43F5E;
+                                  -fx-font-size: 13;
+                                  -fx-font-weight: bold;"/>
+
+                    <Label fx:id="lblDuration"
+                           text="⏱ 120 phút"
+                           style="-fx-text-fill: #CBD5F5;
+                                  -fx-font-size: 13;"/>
+
+                    <Label fx:id="lblRoom"
+                           text="📍 Phòng 3"
+                           style="-fx-text-fill: #CBD5F5;
+                                  -fx-font-size: 13;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Divider -->
+            <Separator style="-fx-background-color: #1E293B;"/>
+
+            <!-- Showtime + Seats -->
+            <HBox spacing="20">
+                <VBox spacing="6">
+                    <Label text="Suất chiếu"
+                           style="-fx-text-fill: #94A3B8; -fx-font-size: 12;"/>
+                    <Label fx:id="lblShowtime"
+                           text="20:00 - 25/02/2026"
+                           style="-fx-text-fill: white;
+                                  -fx-font-size: 15;
+                                  -fx-font-weight: bold;"/>
+                </VBox>
+
+                <VBox spacing="6">
+                    <Label text="Ghế"
+                           style="-fx-text-fill: #94A3B8; -fx-font-size: 12;"/>
+                    <Label fx:id="lblSeats"
+                           text="A1, A2"
+                           style="-fx-text-fill: #FACC15;
+                                  -fx-font-size: 15;
+                                  -fx-font-weight: bold;"/>
+                </VBox>
+            </HBox>
+
+            <!-- QR Code (Fake for UI) -->
+            <VBox alignment="CENTER" spacing="10">
+                <Label text="Quét mã tại rạp"
+                       style="-fx-text-fill: #94A3B8; -fx-font-size: 13;"/>
+
+                <ImageView fx:id="imgQR"
+                           fitWidth="140"
+                           fitHeight="140"
+                           style="-fx-background-color: white;
+                                  -fx-background-radius: 16;
+                                  -fx-padding: 10;"/>
+            </VBox>
+
+            <!-- Total -->
+            <HBox alignment="CENTER_RIGHT">
+                <Label fx:id="lblTotal"
+                       text="Tổng: 150.000 đ"
+                       style="-fx-text-fill: #22C55E;
+                              -fx-font-size: 18;
+                              -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+
+        <!-- STATUS -->
+        <Label fx:id="lblStatus"
+               text="Vé đã thanh toán"
+               alignment="CENTER"
+               maxWidth="Infinity"
+               style="-fx-text-fill: #22C55E;
+                      -fx-font-size: 14;
+                      -fx-font-weight: bold;
+                      -fx-background-color: rgba(34,197,94,0.15);
+                      -fx-background-radius: 14;
+                      -fx-padding: 10;"/>
+
+    </VBox>
+</AnchorPane>
