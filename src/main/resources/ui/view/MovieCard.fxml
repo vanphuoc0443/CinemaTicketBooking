@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="fxcontroller.MovieCardController"
+           prefWidth="220"
+           prefHeight="360">
+
+    <VBox spacing="10"
+          style="-fx-background-color: #1E1E2F;
+                 -fx-background-radius: 18;
+                 -fx-border-radius: 18;
+                 -fx-border-color: #2A2A40;
+                 -fx-border-width: 1;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0.3, 0, 6);">
+
+        <!-- PADDING FIX -->
+        <padding>
+            <Insets top="12" right="12" bottom="12" left="12"/>
+        </padding>
+
+        <!-- POSTER -->
+        <StackPane alignment="TOP_RIGHT">
+            <ImageView fx:id="imgPoster"
+                       fitWidth="196"
+                       fitHeight="250"
+                       preserveRatio="false"
+                       smooth="true"/>
+
+            <!-- RATING BADGE (FIX MARGIN) -->
+            <Label fx:id="lblRating"
+                   text="⭐ 8.5"
+                   style="-fx-background-color: rgba(0,0,0,0.7);
+                          -fx-text-fill: #FFD54F;
+                          -fx-font-size: 12;
+                          -fx-font-weight: bold;
+                          -fx-background-radius: 12;
+                          -fx-padding: 4 10;">
+                <StackPane.margin>
+                    <Insets top="8" right="8" bottom="0" left="0"/>
+                </StackPane.margin>
+            </Label>
+        </StackPane>
+
+        <!-- INFO -->
+        <VBox spacing="6">
+            <Label fx:id="lblTitle"
+                   text="Movie Title"
+                   wrapText="true"
+                   style="-fx-text-fill: white;
+                          -fx-font-size: 16;
+                          -fx-font-weight: bold;"/>
+
+            <Label fx:id="lblGenre"
+                   text="Action • Adventure"
+                   style="-fx-text-fill: #B0B3C6;
+                          -fx-font-size: 12;"/>
+
+            <Label fx:id="lblDuration"
+                   text="120 phút"
+                   style="-fx-text-fill: #8E95B7;
+                          -fx-font-size: 11;"/>
+        </VBox>
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+        <!-- BUTTON -->
+        <Button fx:id="btnBook"
+                text="ĐẶT VÉ"
+                prefHeight="40"
+                maxWidth="Infinity"
+                onAction="#handleBook"
+                style="-fx-background-color: #E50914;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 12;"/>
+
+    </VBox>
+</StackPane>
