@@ -1,63 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="551.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontroller.LoginController">
+<StackPane styleClass="auth-container"
+           prefWidth="1000" prefHeight="700"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="fxcontroller.LoginController">
 
-    <children>
-      <ImageView fitHeight="551.0" fitWidth="380.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../image/978d4354dc8c633339d646e517918ca0.jpg" />
-         </image>
-      </ImageView>
-        <VBox layoutX="80" layoutY="60" spacing="15" />
+    <VBox styleClass="auth-card" spacing="16" alignment="CENTER">
 
-         <Button fx:id="btnRegister" layoutX="134.0" layoutY="398.0" onAction="#goToRegister"
-                 prefHeight="32.0" prefWidth="83.0" style="-fx-background-color: #C62828;" text="Register" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Button>
+        <!-- Branding -->
+        <HBox spacing="8" alignment="CENTER">
+            <Label text="🎬" style="-fx-font-size: 32px;"/>
+            <Label text="🍿" style="-fx-font-size: 28px;"/>
+        </HBox>
+        <Label text="Đặt Vé Xem Phim" styleClass="auth-title"/>
+        <Label text="Đăng nhập vào tài khoản của bạn" styleClass="auth-subtitle"/>
 
-         <Button fx:id="btnLogin" layoutX="134.0" layoutY="341.0" onAction="#handleLogin" prefHeight="32.0" prefWidth="83.0" style="-fx-background-color: #C62828;" text="Login" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-      </Button>
+        <!-- Gradient Divider -->
+        <Region styleClass="gradient-divider" maxWidth="280"/>
 
-         <PasswordField fx:id="txtPassword" layoutX="116.0" layoutY="270.0" prefHeight="32.0" prefWidth="181.0" promptText="Password">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </PasswordField>
+        <!-- Form Fields -->
+        <VBox spacing="12">
+            <padding><Insets top="6"/></padding>
+            <Label text="👤  Tên đăng nhập" styleClass="text-secondary"/>
+            <TextField fx:id="txtEmail" promptText="Nhập tên đăng nhập" styleClass="auth-field"/>
 
-         <TextField fx:id="txtEmail" layoutX="116.0" layoutY="213.0" prefHeight="15.0" prefWidth="181.0" promptText="Username">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </TextField>
-      <Label layoutX="19.0" layoutY="214.0" text="Username" textFill="WHITE">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Label>
-      <Label layoutX="22.0" layoutY="271.0" text="Password" textFill="WHITE">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Label>
-      <Label layoutX="48.0" layoutY="98.0" text="Cinema Ticket Booking" textFill="#b71c1c">
-         <font>
-            <Font name="System Bold" size="25.0" />
-         </font>
-      </Label>
-    </children>
-</AnchorPane>
+            <Label text="🔒  Mật khẩu" styleClass="text-secondary"/>
+            <PasswordField fx:id="txtPassword" promptText="Nhập mật khẩu" styleClass="auth-field"/>
+        </VBox>
+
+        <!-- Error Label -->
+        <Label fx:id="lblMessage" styleClass="auth-error"/>
+
+        <!-- Buttons -->
+        <VBox spacing="10" alignment="CENTER">
+            <Button fx:id="btnLogin" text="🎟  Đăng nhập" onAction="#handleLogin"
+                    styleClass="btn-primary" prefWidth="320" prefHeight="44"/>
+
+            <HBox spacing="6" alignment="CENTER">
+                <Label text="Chưa có tài khoản?" styleClass="text-muted"/>
+                <Button fx:id="btnRegister" text="Đăng ký" onAction="#goToRegister"
+                        styleClass="btn-text"/>
+            </HBox>
+
+            <Button text="Quên mật khẩu?" onAction="#goForgotPassword"
+                    styleClass="btn-text" style="-fx-font-size: 12px;"/>
+        </VBox>
+    </VBox>
+</StackPane>

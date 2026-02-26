@@ -3,83 +3,77 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="fxcontroller.HomeController"
-            prefWidth="360" prefHeight="800"
-            style="-fx-background-color:#121212;">
+            prefWidth="1000" prefHeight="700"
+            styleClass="page-container">
 
-    <!-- ===== TOP BAR ===== -->
+    <!-- ===== TOP NAVIGATION BAR ===== -->
     <top>
-        <HBox spacing="15" style="-fx-background-color:#1f1f1f;">
+        <HBox spacing="15" styleClass="navbar" alignment="CENTER_LEFT">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets top="14" right="24" bottom="14" left="24"/>
             </padding>
 
-            <Label text="🎬 CINEMA"
-                   style="-fx-text-fill:#e50914; -fx-font-size:18px; -fx-font-weight:bold;"/>
+            <Label text="🎬 CINEMA" styleClass="navbar-title"/>
+            <Label text="•" styleClass="text-muted"/>
+            <Label text="Xin chào!" styleClass="text-secondary"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
 
             <TextField fx:id="searchField"
-                       promptText="Search..."
-                       prefWidth="180"/>
+                       promptText="🔍 Tìm kiếm phim..."
+                       styleClass="input-field"
+                       prefWidth="260"
+                       onAction="#searchMovies"/>
 
-            <Button text="Profile"/>
+            <Button text="🔍 Tìm kiếm" onAction="#searchMovies" styleClass="search-btn"/>
+            <Button text="👤 Hồ sơ" onAction="#goProfile" styleClass="btn-outline"/>
+            <Button text="📜 Lịch sử" onAction="#goHistory" styleClass="btn-outline"/>
+            <Button text="🚪 Đăng xuất" onAction="#logout" styleClass="btn-outline"/>
         </HBox>
     </top>
 
     <!-- ===== MAIN CONTENT ===== -->
     <center>
-        <VBox spacing="15">
-            <padding>
-                <Insets top="15" right="15" bottom="15" left="15"/>
-            </padding>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="24">
+                <padding>
+                    <Insets top="28" right="32" bottom="28" left="32"/>
+                </padding>
 
-            <Label text="Now Showing"
-                   style="-fx-text-fill:white; -fx-font-size:16px; -fx-font-weight:bold;"/>
+                <!-- Section Header: Now Showing -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label fx:id="sectionTitle" text="🎥 Đang chiếu" styleClass="heading-lg"/>
+                    <Label text="🔥 Nổi bật" styleClass="badge-trending"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="statusLabel" text="" styleClass="text-muted"/>
+                </HBox>
 
-            <HBox spacing="15">
+                <!-- Dynamic Now Showing Movies -->
+                <FlowPane fx:id="movieContainer" hgap="20" vgap="20" alignment="CENTER_LEFT"/>
 
-                <VBox spacing="5">
-                    <ImageView fx:id="movie1" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
-                        <image>
-                            <Image url="@../../image/poster1.jpg"/>
-                        </image>
-                    </ImageView>
-                    <Label text="Movie 1" style="-fx-text-fill:white;"/>
-                </VBox>
+                <!-- Loading indicator -->
+                <ProgressIndicator fx:id="loadingIndicator" visible="false"
+                                   maxWidth="48" maxHeight="48"/>
 
-                <VBox spacing="5">
-                    <ImageView fx:id="movie2" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
-                        <image>
-                            <Image url="@../../image/poster2.jpg"/>
-                        </image>
-                    </ImageView>
-                    <Label text="Movie 2" style="-fx-text-fill:white;"/>
-                </VBox>
+                <!-- Gradient Divider -->
+                <Region styleClass="gradient-divider"/>
 
-                <VBox spacing="5">
-                    <ImageView fx:id="movie3" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
-                        <image>
-                            <Image url="@../../image/poster3.jpg"/>
-                        </image>
-                    </ImageView>
-                    <Label text="Movie 3" style="-fx-text-fill:white;"/>
-                </VBox>
+                <!-- Section Header: Coming Soon -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label fx:id="comingSoonTitle" text="🎞 Sắp chiếu" styleClass="heading-lg"/>
+                    <Label text="MỚI" styleClass="badge-coming-soon"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="comingSoonCount" text="" styleClass="text-muted"/>
+                </HBox>
 
-                <VBox spacing="5">
-                    <ImageView fx:id="movie4" fitWidth="70" fitHeight="100" onMouseClicked="#openSeatScreen">
-                        <image>
-                            <Image url="@../../image/poster4.jpg"/>
-                        </image>
-                    </ImageView>
-                    <Label text="Movie 4" style="-fx-text-fill:white;"/>
-                </VBox>
-
-            </HBox>
-
-        </VBox>
+                <!-- Dynamic Coming Soon Movies -->
+                <FlowPane fx:id="comingSoonContainer" hgap="20" vgap="20" alignment="CENTER_LEFT"/>
+            </VBox>
+        </ScrollPane>
     </center>
 
 </BorderPane>

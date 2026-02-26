@@ -28,7 +28,7 @@ public class LoginController {
         String password = txtPassword.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            lblMessage.setText("Please enter email and password");
+            lblMessage.setText("Vui lòng nhập tên đăng nhập và mật khẩu");
             return;
         }
 
@@ -38,17 +38,16 @@ public class LoginController {
 
             if (customer != null) {
                 Session.setCurrentCustomer(customer);
-                switchScene("/ui/view/main.fxml");
+                switchScene("/ui/view/home.fxml");
             } else {
-                lblMessage.setText("Invalid email or password");
+                lblMessage.setText("Tên đăng nhập hoặc mật khẩu không đúng");
             }
 
         } catch (Exception e) {
-            lblMessage.setText("Database error");
+            lblMessage.setText("Lỗi kết nối cơ sở dữ liệu");
             e.printStackTrace();
         }
     }
-
 
     @FXML
     public void goToRegister(ActionEvent event) {
@@ -59,9 +58,20 @@ public class LoginController {
         }
     }
 
+    @FXML
+    public void goForgotPassword(ActionEvent event) {
+        try {
+            switchScene("/ui/view/forgot_password.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void switchScene(String fxml) throws Exception {
         Stage stage = (Stage) txtEmail.getScene().getWindow();
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource(fxml)));
+        scene.getStylesheets().add(
+                getClass().getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
     }
 }

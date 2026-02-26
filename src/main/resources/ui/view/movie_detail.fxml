@@ -1,13 +1,133 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.MovieDetailController"
-      spacing="10" alignment="CENTER">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <Label fx:id="movieTitle" text="Movie Title"/>
-    <Label fx:id="movieInfo" text="Genre | Duration"/>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 
-    <Button text="Book Ticket" onAction="#bookTicket"/>
+<BorderPane styleClass="page-container"
+            prefWidth="1000" prefHeight="700"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fxcontroller.MovieDetailController">
 
-</VBox>
+    <!-- TOP: Header -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="navbar">
+            <padding><Insets top="12" right="24" bottom="12" left="24"/></padding>
+            <Button text="← Quay lại" onAction="#goBack" styleClass="back-btn"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="🎬 Chi tiết phim" styleClass="navbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Region prefWidth="80"/>
+        </HBox>
+    </top>
+
+    <!-- CENTER: Scrollable content -->
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane">
+            <VBox spacing="24" alignment="TOP_CENTER">
+                <padding><Insets top="28" right="40" bottom="28" left="40"/></padding>
+
+                <!-- Movie Hero Section -->
+                <HBox spacing="28" alignment="TOP_CENTER">
+
+                    <!-- Poster -->
+                    <VBox alignment="CENTER" spacing="8">
+                        <ImageView fx:id="posterImage" fitWidth="220" fitHeight="320" preserveRatio="true"
+                                   styleClass="movie-poster"/>
+                    </VBox>
+
+                    <!-- Info Card -->
+                    <VBox spacing="14" styleClass="card-glow" HBox.hgrow="ALWAYS" maxWidth="580">
+                        <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+
+                        <!-- Title -->
+                        <Label fx:id="titleLabel" text="Movie Title" styleClass="heading-xl" wrapText="true"/>
+
+                        <!-- Rating + Trending badges -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label fx:id="ratingBadge" text="⭐ 8.5/10" styleClass="chip"/>
+                            <Label text="🔥 Trending" styleClass="badge-trending"/>
+                        </HBox>
+
+                        <Region styleClass="gradient-divider"/>
+
+                        <!-- Info Grid: 2 columns -->
+                        <GridPane hgap="24" vgap="12">
+                            <!-- Row 0: Director + Genre -->
+                            <VBox spacing="3" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                <Label text="🎬 Đạo diễn" styleClass="info-label"/>
+                                <Label fx:id="directorLabel" text="—" styleClass="info-value" wrapText="true"/>
+                            </VBox>
+                            <VBox spacing="3" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                                <Label text="🎭 Thể loại" styleClass="info-label"/>
+                                <Label fx:id="genreLabel" text="—" styleClass="info-value" wrapText="true"/>
+                            </VBox>
+
+                            <!-- Row 1: Release Date + Duration -->
+                            <VBox spacing="3" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                                <Label text="📅 Ngày chiếu" styleClass="info-label"/>
+                                <Label fx:id="releaseDateLabel" text="—" styleClass="info-value"/>
+                            </VBox>
+                            <VBox spacing="3" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                                <Label text="⏱ Thời lượng" styleClass="info-label"/>
+                                <Label fx:id="durationLabel" text="—" styleClass="info-value"/>
+                            </VBox>
+
+                            <!-- Row 2: Language + Rating -->
+                            <VBox spacing="3" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                                <Label text="🌐 Ngôn ngữ" styleClass="info-label"/>
+                                <Label fx:id="languageLabel" text="—" styleClass="info-value"/>
+                            </VBox>
+                            <VBox spacing="3" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                                <Label text="⭐ Đánh giá" styleClass="info-label"/>
+                                <Label fx:id="ratingLabel" text="—" styleClass="info-value"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- Description -->
+                        <VBox spacing="4">
+                            <Label text="📝 Mô tả" styleClass="info-label"/>
+                            <Label fx:id="descriptionLabel" text="—" styleClass="text-secondary" wrapText="true"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+
+                <!-- Gradient Divider -->
+                <Region styleClass="gradient-divider"/>
+
+                <!-- Showtime Section -->
+                <VBox spacing="14">
+                    <Label text="📅 Chọn lịch chiếu" styleClass="heading-lg"/>
+
+                    <!-- Date tabs -->
+                    <HBox fx:id="dateTabs" spacing="8" alignment="CENTER_LEFT"/>
+
+                    <!-- Time slots -->
+                    <Label text="🕐 Suất chiếu" styleClass="heading-sm"/>
+                    <FlowPane fx:id="timeSlots" hgap="10" vgap="10" alignment="CENTER_LEFT"/>
+
+                    <!-- Ticket expiration info -->
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="card-elevated" maxWidth="420">
+                        <padding><Insets top="10" right="16" bottom="10" left="16"/></padding>
+                        <Label text="⏰" style="-fx-font-size: 20px;"/>
+                        <VBox spacing="2">
+                            <Label text="Thời hạn vé" styleClass="info-label"/>
+                            <Label fx:id="expirationLabel" text="Vé có hiệu lực đến 30 phút sau suất chiếu"
+                                   styleClass="text-secondary"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <Region prefHeight="8"/>
+
+                <!-- Book Ticket Button -->
+                <Button fx:id="bookBtn" text="🎟 Đặt vé ngay" onAction="#bookTicket"
+                        styleClass="btn-continue" prefWidth="320" prefHeight="48" disable="true"/>
+
+                <Region prefHeight="12"/>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

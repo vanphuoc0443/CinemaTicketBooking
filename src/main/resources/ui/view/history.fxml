@@ -1,10 +1,42 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.HistoryController"
-      spacing="10" alignment="CENTER">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <ListView fx:id="historyList"/>
-    <Button text="Back Home" onAction="#home"/>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox styleClass="page-container" spacing="16"
+      prefWidth="1000" prefHeight="700"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="fxcontroller.HistoryController">
+
+    <padding><Insets top="28" right="40" bottom="28" left="40"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <Label text="📜 Lịch sử đặt vé" styleClass="heading-lg"/>
+        <Label text="Tất cả" styleClass="chip"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🏠 Trang chủ" onAction="#home" styleClass="btn-outline"/>
+    </HBox>
+
+    <Label text="Xem lại tất cả các vé đã đặt" styleClass="text-secondary"/>
+
+    <!-- Gradient Divider -->
+    <Region styleClass="gradient-divider"/>
+
+    <!-- Empty state -->
+    <Label fx:id="emptyLabel" text="📭 Chưa có lịch sử đặt vé nào."
+           styleClass="text-muted" style="-fx-font-size: 16px; -fx-padding: 40 0 0 0;"/>
+
+    <!-- Booking cards -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+        <VBox fx:id="historyContainer" spacing="16">
+            <padding><Insets top="4" right="4" bottom="4" left="4"/></padding>
+        </VBox>
+    </ScrollPane>
 </VBox>

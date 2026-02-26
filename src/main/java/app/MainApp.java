@@ -22,10 +22,13 @@ public class MainApp extends Application {
         scene.getStylesheets().add(
                 getClass().getResource("/css/style.css").toExternalForm());
 
-        stage.setTitle("🎬 Cinema Ticket Booking");
+        stage.setTitle("🎬 Đặt Vé Xem Phim");
         stage.setScene(scene);
         stage.setMinWidth(900);
         stage.setMinHeight(600);
+
+        // Open maximized by default for a clean full-screen experience
+        stage.setMaximized(true);
         stage.show();
     }
 

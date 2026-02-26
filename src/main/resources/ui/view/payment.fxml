@@ -1,12 +1,68 @@
-<?import javafx.scene.layout.VBox?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.PaymentController"
-      spacing="10" alignment="CENTER">
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-    <Label text="Select Payment Method"/>
-    <ComboBox fx:id="methodBox"/>
-    <Button text="Pay" onAction="#pay"/>
-</VBox>
+<StackPane styleClass="page-container"
+           prefWidth="1000" prefHeight="700"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="fxcontroller.PaymentController">
+
+    <VBox styleClass="card-glow" spacing="18" alignment="CENTER" maxWidth="520">
+        <padding><Insets top="32" right="36" bottom="32" left="36"/></padding>
+
+        <!-- Step indicator -->
+        <HBox alignment="CENTER">
+            <Label text="Bước 4/5" styleClass="step-text"/>
+        </HBox>
+
+        <Label text="💳" style="-fx-font-size: 44px;"/>
+        <Label text="Thanh toán" styleClass="heading-lg"/>
+        <Label text="Chọn phương thức thanh toán" styleClass="text-secondary"/>
+
+        <!-- Gradient Divider -->
+        <Region styleClass="gradient-divider"/>
+
+        <!-- Order summary -->
+        <VBox spacing="8" alignment="CENTER_LEFT" styleClass="card-elevated" maxWidth="400">
+            <padding><Insets top="12" right="20" bottom="12" left="20"/></padding>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="🎬 Phim:" styleClass="info-label"/>
+                <Label fx:id="moviePayLabel" text="—" styleClass="info-value"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="🎟 Ghế:" styleClass="info-label"/>
+                <Label fx:id="seatsPayLabel" text="—" styleClass="info-value"/>
+            </HBox>
+        </VBox>
+
+        <!-- Payment Method -->
+        <VBox spacing="10" alignment="CENTER">
+            <Label text="Phương thức" styleClass="info-label"/>
+            <ComboBox fx:id="methodBox" styleClass="combo-box"
+                      prefWidth="340" prefHeight="42"/>
+        </VBox>
+
+        <!-- Price Summary -->
+        <HBox spacing="20" alignment="CENTER" styleClass="card-elevated" maxWidth="360">
+            <padding><Insets top="10" right="20" bottom="10" left="20"/></padding>
+            <VBox alignment="CENTER" spacing="2">
+                <Label text="Tổng cộng" styleClass="info-label"/>
+                <Label fx:id="totalLabel" text="0đ" styleClass="price-tag" style="-fx-font-size: 22px;"/>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+
+        <Button text="💳 Thanh toán" onAction="#pay"
+                styleClass="btn-primary" prefWidth="340" prefHeight="44"/>
+    </VBox>
+</StackPane>

@@ -129,6 +129,13 @@
             <version>3.14.0</version>
         </dependency>
 
+        <!-- Jakarta Mail - Email sending -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
         <!-- Apache Commons Validator - Input validation -->
         <dependency>
             <groupId>commons-validator</groupId>
@@ -258,6 +265,16 @@
                 </configuration>
             </plugin>
 
+            <!-- Exec Maven Plugin - mvn exec:java chạy user app, mvn exec:java -Padmin chạy admin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>app.MainApp</mainClass>
+                </configuration>
+            </plugin>
+
             <!-- Maven JAR Plugin - Create executable JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -366,6 +383,23 @@
             <properties>
                 <env>prod</env>
             </properties>
+        </profile>
+
+        <!-- Admin App Profile - Run with: mvn compile exec:java -Padmin -->
+        <profile>
+            <id>admin</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <mainClass>app.AdminApp</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

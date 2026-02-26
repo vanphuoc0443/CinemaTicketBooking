@@ -1,11 +1,68 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fxcontroller.SummaryController"
-      spacing="10" alignment="CENTER">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <Label fx:id="seatLabel"/>
-    <Label fx:id="priceLabel"/>
-    <Button text="Proceed to Payment" onAction="#goPayment"/>
-</VBox>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Separator?>
+
+<StackPane styleClass="page-container"
+           prefWidth="1000" prefHeight="700"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="fxcontroller.SummaryController">
+
+    <VBox styleClass="card-glow" spacing="16" alignment="CENTER" maxWidth="520">
+        <padding><Insets top="32" right="36" bottom="32" left="36"/></padding>
+
+        <!-- Step indicator -->
+        <HBox alignment="CENTER">
+            <Label text="Bước 3/5" styleClass="step-text"/>
+        </HBox>
+
+        <Label text="📋 Tóm tắt đặt vé" styleClass="heading-lg"/>
+        <Label text="Kiểm tra thông tin trước khi thanh toán" styleClass="text-secondary"/>
+
+        <!-- Gradient Divider -->
+        <Region styleClass="gradient-divider"/>
+
+        <!-- Movie + Showtime -->
+        <HBox spacing="20" alignment="CENTER" styleClass="detail-row">
+            <VBox alignment="CENTER" spacing="4">
+                <Label text="🎬 Phim" styleClass="info-label"/>
+                <Label fx:id="movieLabel" styleClass="info-value"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="4">
+                <Label text="🕐 Suất chiếu" styleClass="info-label"/>
+                <Label fx:id="showtimeLabel" styleClass="info-value"/>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Seat Info -->
+        <HBox spacing="20" alignment="CENTER" styleClass="detail-row">
+            <VBox alignment="CENTER" spacing="4">
+                <Label text="🎟 Ghế đã chọn" styleClass="info-label"/>
+                <Label fx:id="seatLabel" styleClass="info-value" wrapText="true"/>
+            </VBox>
+        </HBox>
+
+        <!-- Price Info -->
+        <HBox alignment="CENTER" styleClass="detail-row">
+            <VBox alignment="CENTER" spacing="4">
+                <Label text="💰 Tổng tiền" styleClass="info-label"/>
+                <Label fx:id="priceLabel" styleClass="price-tag"/>
+            </VBox>
+        </HBox>
+
+        <!-- Gradient Divider -->
+        <Region styleClass="gradient-divider"/>
+
+        <Button text="Tiếp tục thanh toán →" onAction="#goPayment"
+                styleClass="btn-gold" prefWidth="340" prefHeight="44"/>
+    </VBox>
+</StackPane>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane styleClass="page-container"
+           prefWidth="1000" prefHeight="700"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="fxcontroller.ProfileController">
+
+    <VBox alignment="CENTER" spacing="0">
+
+        <!-- Top navbar -->
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="navbar">
+            <padding><Insets top="12" right="24" bottom="12" left="24"/></padding>
+            <Button text="← Quay lại" onAction="#goBack" styleClass="back-btn"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="👤 Hồ sơ cá nhân" styleClass="navbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Region prefWidth="80"/>
+        </HBox>
+
+        <!-- Content -->
+        <StackPane VBox.vgrow="ALWAYS" alignment="CENTER">
+            <VBox styleClass="auth-card" spacing="16" alignment="CENTER" maxWidth="480">
+                <padding><Insets top="28" right="36" bottom="28" left="36"/></padding>
+
+                <!-- Avatar circle -->
+                <StackPane styleClass="profile-avatar" maxWidth="80" maxHeight="80" minWidth="80" minHeight="80">
+                    <Label fx:id="lblAvatar" text="?" style="-fx-font-size: 36px; -fx-text-fill: #1a1a2e; -fx-font-weight: bold;"/>
+                </StackPane>
+
+                <Label fx:id="lblWelcome" text="Người dùng" styleClass="heading-lg"/>
+                <Label fx:id="lblMemberSince" text="" styleClass="text-muted"/>
+
+                <!-- Gradient Divider -->
+                <Region styleClass="gradient-divider" maxWidth="320"/>
+
+                <!-- Form -->
+                <VBox spacing="12">
+                    <VBox spacing="4">
+                        <Label text="👤  Họ tên" styleClass="text-secondary"/>
+                        <TextField fx:id="txtName" promptText="Nhập họ tên" styleClass="auth-field"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="📧  Email" styleClass="text-secondary"/>
+                        <TextField fx:id="txtEmail" promptText="Nhập email" styleClass="auth-field"/>
+                    </VBox>
+
+                    <VBox spacing="4">
+                        <Label text="📱  Số điện thoại" styleClass="text-secondary"/>
+                        <TextField fx:id="txtPhone" promptText="Nhập số điện thoại" styleClass="auth-field"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Status messages -->
+                <Label fx:id="lblError" styleClass="auth-error" wrapText="true"/>
+                <Label fx:id="lblSuccess" style="-fx-text-fill: #4caf50; -fx-font-size: 13px;" wrapText="true"/>
+
+                <!-- Save Button -->
+                <Button fx:id="btnSave" text="💾 Lưu thay đổi" onAction="#handleSave"
+                        styleClass="btn-primary" prefWidth="300" prefHeight="44"/>
+            </VBox>
+        </StackPane>
+    </VBox>
+</StackPane>
