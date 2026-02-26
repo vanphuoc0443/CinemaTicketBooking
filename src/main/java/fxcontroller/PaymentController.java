@@ -145,7 +145,7 @@ public class PaymentController {
             ps.executeUpdate();
 
             lblStatus.setText("🎉 Thanh toán thành công!");
-            openHistory();
+            openTicket();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,12 +164,22 @@ public class PaymentController {
         }
     }
 
-    private void openHistory() {
+    private void openTicket() {
         try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/ui/view/ticket.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            // Truyền bookingId sang Ticket (chuẩn app thật)
+            TicketController controller = loader.getController();
+            controller.setBookingId(bookingId);
+
             Stage stage = (Stage) btnConfirm.getScene().getWindow();
-            Scene scene = new Scene(FXMLLoader.load(
-                    getClass().getResource("/ui/view/history.fxml")));
             stage.setScene(scene);
+            stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
