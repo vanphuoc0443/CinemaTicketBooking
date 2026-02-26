@@ -13,3 +13,10 @@ db.pool.connection.timeout=30000
 # Application Settings
 app.name=Cinema Booking System
 app.version=1.0.0
+
+# Email Settings (Gmail SMTP)
+email.enabled=true
+email.host=smtp.gmail.com
+email.port=587
+email.username=your-email@gmail.com
+email.password=your-app-password
