@@ -154,6 +154,41 @@ public class CustomerDAO {
         }
     }
 
+    // Cap nhat mat khau
+    public boolean updatePassword(String email, String newPassword) throws SQLException {
+        String hashedPassword = org.mindrot.jbcrypt.BCrypt.hashpw(newPassword, org.mindrot.jbcrypt.BCrypt.gensalt());
+        String sql = "UPDATE customers SET password_hash = ? WHERE email = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, hashedPassword);
+            stmt.setString(2, email);
+
+            int result = stmt.executeUpdate();
+            conn.commit();
+
+            return result > 0;
+        }
+    }
+
+    // Cap nhat email
+    public boolean updateEmail(int customerId, String newEmail) throws SQLException {
+        String sql = "UPDATE customers SET email = ? WHERE customer_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, newEmail);
+            stmt.setInt(2, customerId);
+
+            int result = stmt.executeUpdate();
+            conn.commit();
+
+            return result > 0;
+        }
+    }
+
     // Xoa khach hang
     public boolean delete(int customerId) throws SQLException {
         String sql = "DELETE FROM customers WHERE customer_id = ?";
