@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane styleClass="page-container"
+            prefWidth="1100" prefHeight="750"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fxcontroller.AdminController">
+
+    <!-- TOP: Admin header -->
+    <top>
+        <HBox spacing="12" styleClass="navbar" alignment="CENTER_LEFT">
+            <padding><Insets top="14" right="24" bottom="14" left="24"/></padding>
+            <Label text="⚙ CINEMA ADMIN" styleClass="navbar-title"/>
+            <Label text="•" styleClass="text-muted"/>
+            <Label text="Quản lý phòng chiếu &amp; suất chiếu" styleClass="text-secondary"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="" styleClass="text-muted"/>
+        </HBox>
+    </top>
+
+    <!-- CENTER: TabPane with 3 tabs -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="admin-tab-pane">
+
+            <!-- ====== TAB 1: PHÒNG CHIẾU ====== -->
+            <Tab text="🏛 Phòng chiếu">
+                <VBox spacing="16">
+                    <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Danh sách phòng chiếu" styleClass="heading-lg"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="theaterCountLabel" text="0/10 phòng" styleClass="text-secondary"/>
+                        <Button text="＋ Thêm phòng" onAction="#addTheater" styleClass="btn-gold"/>
+                    </HBox>
+
+                    <ListView fx:id="theaterList" prefHeight="450" styleClass="admin-list"/>
+
+                    <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <Button text="🗑 Xóa phòng đã chọn" onAction="#deleteTheater" styleClass="btn-danger"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ====== TAB 2: PHIM ĐANG CHIẾU ====== -->
+            <Tab text="🎬 Phim đang chiếu">
+                <VBox spacing="16">
+                    <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Tìm phim từ OMDB" styleClass="heading-lg"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="movieSearchField" promptText="🔍 Nhập tên phim để tìm..."
+                                   prefWidth="350" styleClass="input-field" onAction="#searchMoviesForAdmin"/>
+                        <Button text="🔍 Tìm kiếm" onAction="#searchMoviesForAdmin" styleClass="search-btn"/>
+                    </HBox>
+
+                    <Label text="Kết quả tìm kiếm:" styleClass="text-secondary"/>
+                    <ListView fx:id="searchResultList" prefHeight="150" styleClass="admin-list"/>
+
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Button text="＋ Thêm phim đã chọn vào lịch chiếu" onAction="#addMovieToSchedule"
+                                styleClass="btn-gold"/>
+                    </HBox>
+
+                    <Region styleClass="gradient-divider"/>
+
+                    <Label text="Phim đang có trong lịch chiếu:" styleClass="heading-md"/>
+                    <ListView fx:id="scheduledMovieList" prefHeight="200" styleClass="admin-list"/>
+
+                    <HBox spacing="12" alignment="CENTER_RIGHT">
+                        <Button text="🗑 Xóa phim đã chọn khỏi lịch" onAction="#removeMovie" styleClass="btn-danger"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <!-- ====== TAB 3: SUẤT CHIẾU ====== -->
+            <Tab text="📅 Suất chiếu">
+                <VBox spacing="14">
+                    <padding><Insets top="20" right="30" bottom="20" left="30"/></padding>
+
+                    <Label text="Tạo suất chiếu mới" styleClass="heading-lg"/>
+
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <!-- Left: form -->
+                        <VBox spacing="12" prefWidth="400">
+                            <Label text="Chọn phim:" styleClass="text-secondary"/>
+                            <ComboBox fx:id="movieCombo" prefWidth="380" promptText="-- Chọn phim --"/>
+
+                            <Label text="Chọn phòng chiếu:" styleClass="text-secondary"/>
+                            <ComboBox fx:id="theaterCombo" prefWidth="380" promptText="-- Chọn phòng --"/>
+
+                            <Label text="Ngày chiếu:" styleClass="text-secondary"/>
+                            <DatePicker fx:id="showDatePicker" prefWidth="380"/>
+
+                            <Label text="Giờ bắt đầu:" styleClass="text-secondary"/>
+                            <ComboBox fx:id="timeCombo" prefWidth="380" promptText="-- Chọn giờ --"/>
+
+                            <Label fx:id="endTimeLabel" text="" styleClass="text-muted"/>
+
+                            <Button text="✅ Tạo suất chiếu" onAction="#createShowtime"
+                                    styleClass="btn-gold" prefWidth="380" prefHeight="40"/>
+                        </VBox>
+
+                        <!-- Right: existing showtimes -->
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Suất chiếu hiện có:" styleClass="heading-md"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="showtimeCountLabel" text="" styleClass="text-secondary"/>
+                            </HBox>
+
+                            <ListView fx:id="showtimeList" prefHeight="400" styleClass="admin-list"/>
+
+                            <HBox spacing="12" alignment="CENTER_RIGHT">
+                                <Button text="🗑 Xóa suất chiếu" onAction="#deleteShowtime" styleClass="btn-danger"/>
+                                <Button text="🔄 Làm mới" onAction="#refreshShowtimes" styleClass="btn-outline"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+</BorderPane>
