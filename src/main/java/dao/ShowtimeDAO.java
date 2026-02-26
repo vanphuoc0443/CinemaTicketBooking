@@ -16,8 +16,8 @@ public class ShowtimeDAO {
                 "ORDER BY s.show_date, s.show_time";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 showtimes.add(extractShowtimeFromResultSet(rs));
@@ -33,7 +33,7 @@ public class ShowtimeDAO {
                 "JOIN movies m ON s.movie_id = m.movie_id WHERE s.showtime_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
 
@@ -55,7 +55,7 @@ public class ShowtimeDAO {
                 "WHERE s.movie_id = ? ORDER BY s.show_date, s.show_time";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, movieId);
 
@@ -77,7 +77,7 @@ public class ShowtimeDAO {
                 "WHERE s.show_date = ? ORDER BY s.show_time";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, date);
 
@@ -91,13 +91,13 @@ public class ShowtimeDAO {
         return showtimes;
     }
 
-    // Kiem tra xung dot phong chieu
+    // Kiem tra xung dot phong chieu (exact time match)
     public boolean checkRoomConflict(int roomNumber, String showDate, String showTime) throws SQLException {
         String sql = "SELECT COUNT(*) FROM showtimes " +
                 "WHERE room_number = ? AND show_date = ? AND show_time = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, roomNumber);
             stmt.setString(2, showDate);
@@ -113,13 +113,144 @@ public class ShowtimeDAO {
         return false;
     }
 
+    /**
+     * Kiểm tra xung đột thời gian dựa trên duration của phim.
+     * Tính endTime = startTime + movieDuration + 15 phút (dọn dẹp).
+     * Kiểm tra overlap với tất cả suất chiếu cùng phòng cùng ngày.
+     *
+     * @param roomNumber  Phòng chiếu
+     * @param showDate    Ngày chiếu (yyyy-MM-dd)
+     * @param startTime   Giờ bắt đầu (HH:mm)
+     * @param durationMin Thời lượng phim (phút)
+     * @param excludeId   ID suất chiếu cần loại trừ (khi update), -1 nếu không cần
+     * @return true nếu có xung đột
+     */
+    public boolean checkTimeOverlap(int roomNumber, String showDate, String startTime,
+            int durationMin, int excludeId) throws SQLException {
+        // Calculate new showtime range: [startTime, startTime + duration + 15min
+        // buffer]
+        int bufferMin = 15;
+        int totalMin = durationMin + bufferMin;
+
+        // Query all showtimes in the same room on the same date
+        String sql = "SELECT s.show_time, m.duration FROM showtimes s " +
+                "JOIN movies m ON s.movie_id = m.movie_id " +
+                "WHERE s.room_number = ? AND s.show_date = ?";
+        if (excludeId > 0) {
+            sql += " AND s.showtime_id != ?";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, roomNumber);
+            stmt.setString(2, showDate);
+            if (excludeId > 0) {
+                stmt.setInt(3, excludeId);
+            }
+
+            // Parse new showtime start/end
+            int newStartMin = parseTimeToMinutes(startTime);
+            int newEndMin = newStartMin + totalMin;
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String existingTime = rs.getString("show_time");
+                    int existingDuration = rs.getInt("duration");
+
+                    int existStart = parseTimeToMinutes(existingTime);
+                    int existEnd = existStart + existingDuration + bufferMin;
+
+                    // Check overlap: two ranges [A,B] and [C,D] overlap if A < D && C < B
+                    if (newStartMin < existEnd && existStart < newEndMin) {
+                        return true; // CONFLICT!
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Đếm suất chiếu theo phim
+    public int countByMovieId(int movieId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM showtimes WHERE movie_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, movieId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+
+    // Lấy suất chiếu theo phòng và ngày
+    public List<Showtime> findByRoomAndDate(int roomNumber, String date) throws SQLException {
+        List<Showtime> showtimes = new ArrayList<>();
+        String sql = "SELECT s.*, m.title as movie_title FROM showtimes s " +
+                "JOIN movies m ON s.movie_id = m.movie_id " +
+                "WHERE s.room_number = ? AND s.show_date = ? ORDER BY s.show_time";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, roomNumber);
+            stmt.setString(2, date);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    showtimes.add(extractShowtimeFromResultSet(rs));
+                }
+            }
+        }
+        return showtimes;
+    }
+
+    // Lấy suất chiếu theo phim và ngày (cho user app)
+    public List<Showtime> findByMovieAndDate(int movieId, String date) throws SQLException {
+        List<Showtime> showtimes = new ArrayList<>();
+        String sql = "SELECT s.*, m.title as movie_title FROM showtimes s " +
+                "JOIN movies m ON s.movie_id = m.movie_id " +
+                "WHERE s.movie_id = ? AND s.show_date = ? ORDER BY s.show_time";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, movieId);
+            stmt.setString(2, date);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    showtimes.add(extractShowtimeFromResultSet(rs));
+                }
+            }
+        }
+        return showtimes;
+    }
+
+    /**
+     * Parse time string "HH:mm:ss" or "HH:mm" to total minutes since midnight.
+     */
+    private int parseTimeToMinutes(String time) {
+        if (time == null)
+            return 0;
+        String[] parts = time.split(":");
+        int hours = Integer.parseInt(parts[0]);
+        int minutes = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+        return hours * 60 + minutes;
+    }
+
     // Them suat chieu moi
     public boolean save(Showtime showtime) throws SQLException {
         String sql = "INSERT INTO showtimes (movie_id, show_date, show_time, room_number, " +
                 "total_seats, available_seats) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, showtime.getMovieId());
             stmt.setString(2, showtime.getShowDate());
@@ -150,7 +281,7 @@ public class ShowtimeDAO {
                 "room_number = ? WHERE showtime_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtime.getMovieId());
             stmt.setString(2, showtime.getShowDate());
@@ -170,7 +301,7 @@ public class ShowtimeDAO {
         String sql = "DELETE FROM showtimes WHERE showtime_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, showtimeId);
             int result = stmt.executeUpdate();

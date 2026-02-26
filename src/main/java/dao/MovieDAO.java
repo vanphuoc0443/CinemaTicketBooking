@@ -14,8 +14,8 @@ public class MovieDAO {
         String sql = "SELECT * FROM movies ORDER BY created_at DESC";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 movies.add(extractMovieFromResultSet(rs));
@@ -30,7 +30,7 @@ public class MovieDAO {
         String sql = "SELECT * FROM movies WHERE movie_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, movieId);
 
@@ -50,7 +50,7 @@ public class MovieDAO {
         String sql = "SELECT * FROM movies WHERE title LIKE ? OR genre LIKE ? ORDER BY title";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             String searchPattern = "%" + keyword + "%";
             stmt.setString(1, searchPattern);
@@ -68,19 +68,23 @@ public class MovieDAO {
 
     // Them phim moi
     public boolean save(Movie movie) throws SQLException {
-        String sql = "INSERT INTO movies (title, genre, duration, description, poster_url, release_date) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO movies (title, genre, duration, description, poster_url, release_date, " +
+                "director, imdb_rating, language, imdb_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, movie.getTitle());
             stmt.setString(2, movie.getGenre());
             stmt.setInt(3, movie.getDuration());
             stmt.setString(4, movie.getDescription());
             stmt.setString(5, movie.getPosterUrl());
-            stmt.setDate(6, movie.getReleaseDate() != null ?
-                    new java.sql.Date(movie.getReleaseDate().getTime()) : null);
+            stmt.setDate(6,
+                    movie.getReleaseDate() != null ? new java.sql.Date(movie.getReleaseDate().getTime()) : null);
+            stmt.setString(7, movie.getDirector());
+            stmt.setString(8, movie.getImdbRating());
+            stmt.setString(9, movie.getLanguage());
+            stmt.setString(10, movie.getImdbId());
 
             int result = stmt.executeUpdate();
 
@@ -101,19 +105,24 @@ public class MovieDAO {
     // Cap nhat phim
     public boolean update(Movie movie) throws SQLException {
         String sql = "UPDATE movies SET title = ?, genre = ?, duration = ?, " +
-                "description = ?, poster_url = ?, release_date = ? WHERE movie_id = ?";
+                "description = ?, poster_url = ?, release_date = ?, " +
+                "director = ?, imdb_rating = ?, language = ?, imdb_id = ? WHERE movie_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, movie.getTitle());
             stmt.setString(2, movie.getGenre());
             stmt.setInt(3, movie.getDuration());
             stmt.setString(4, movie.getDescription());
             stmt.setString(5, movie.getPosterUrl());
-            stmt.setDate(6, movie.getReleaseDate() != null ?
-                    new java.sql.Date(movie.getReleaseDate().getTime()) : null);
-            stmt.setInt(7, movie.getMovieId());
+            stmt.setDate(6,
+                    movie.getReleaseDate() != null ? new java.sql.Date(movie.getReleaseDate().getTime()) : null);
+            stmt.setString(7, movie.getDirector());
+            stmt.setString(8, movie.getImdbRating());
+            stmt.setString(9, movie.getLanguage());
+            stmt.setString(10, movie.getImdbId());
+            stmt.setInt(11, movie.getMovieId());
 
             int result = stmt.executeUpdate();
             conn.commit();
@@ -127,7 +136,7 @@ public class MovieDAO {
         String sql = "DELETE FROM movies WHERE movie_id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, movieId);
             int result = stmt.executeUpdate();
@@ -149,6 +158,15 @@ public class MovieDAO {
         movie.setReleaseDate(rs.getDate("release_date"));
         movie.setCreatedAt(rs.getTimestamp("created_at"));
         movie.setUpdatedAt(rs.getTimestamp("updated_at"));
+        // OMDB extended fields
+        try {
+            movie.setDirector(rs.getString("director"));
+            movie.setImdbRating(rs.getString("imdb_rating"));
+            movie.setLanguage(rs.getString("language"));
+            movie.setImdbId(rs.getString("imdb_id"));
+        } catch (SQLException ignored) {
+            // Columns may not exist yet if migration hasn't run
+        }
         return movie;
     }
 }

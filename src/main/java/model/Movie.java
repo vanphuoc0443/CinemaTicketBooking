@@ -1,4 +1,5 @@
 package model;
+
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -12,6 +13,10 @@ public class Movie {
     private Date releaseDate;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String imdbRating;
+    private String imdbId;
+    private String director;
+    private String language;
 
     public Movie() {
     }
@@ -25,7 +30,7 @@ public class Movie {
     }
 
     public Movie(int movieId, String title, String genre, int duration, String description,
-                 String posterUrl, Date releaseDate) {
+            String posterUrl, Date releaseDate) {
         this.movieId = movieId;
         this.title = title;
         this.genre = genre;
@@ -107,6 +112,38 @@ public class Movie {
         this.updatedAt = updatedAt;
     }
 
+    public String getImdbRating() {
+        return imdbRating;
+    }
+
+    public void setImdbRating(String imdbRating) {
+        this.imdbRating = imdbRating;
+    }
+
+    public String getImdbId() {
+        return imdbId;
+    }
+
+    public void setImdbId(String imdbId) {
+        this.imdbId = imdbId;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -115,6 +152,7 @@ public class Movie {
                 ", genre='" + genre + '\'' +
                 ", duration=" + duration +
                 ", description='" + description + '\'' +
+                ", imdbRating='" + imdbRating + '\'' +
                 '}';
     }
 }
